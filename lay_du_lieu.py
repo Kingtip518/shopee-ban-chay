@@ -128,11 +128,20 @@ def hoi_danh_sach_san_pham(dieu_kien: str) -> list:
     return du_lieu["productOfferV2"]["nodes"] or []
 
 
-def tao_lien_ket_shop(ma_shop: str) -> str:
-    """Tạo link tiếp thị liên kết dẫn tới trang gian hàng (người xem mua trong gian hàng thì Tú có hoa hồng)."""
+def tao_lien_ket_shop(ma_shop: str) -> dict:
+    """Lấy link tiếp thị liên kết và ảnh đại diện (logo) thật của gian hàng từ Shopee.
+    Cách 1: hỏi danh sách gian hàng tiếp thị liên kết (shopOfferV2) theo mã shop, có sẵn link và logo.
+    Cách 2 (dự phòng): tự tạo link rút gọn tới trang gian hàng; khi đó chưa có logo."""
+    try:
+        du_lieu = hoi_shopee("{shopOfferV2(shopId:%d,page:1,limit:1){nodes{shopId shopName imageUrl offerLink}}}" % int(ma_shop))
+        ds = du_lieu["shopOfferV2"]["nodes"] or []
+        if ds and ds[0].get("offerLink"):
+            return {"lien_ket": ds[0]["offerLink"], "logo": chuan_anh(ds[0].get("imageUrl"))}
+    except Exception:
+        pass
     dia_chi = f"https://shopee.vn/shop/{int(ma_shop)}"
     du_lieu = hoi_shopee('mutation{generateShortLink(input:{originUrl:"%s",subIds:["radar","gianhang"]}){shortLink}}' % dia_chi)
-    return du_lieu["generateShortLink"]["shortLink"]
+    return {"lien_ket": du_lieu["generateShortLink"]["shortLink"], "logo": ""}
 
 
 def lay_theo_tu_khoa(tu_khoa: str, trang: int) -> list:
@@ -182,6 +191,18 @@ def doi_so(gia_tri) -> float:
         return 0.0
 
 
+def chuan_anh(gia_tri) -> str:
+    """Ảnh thật của Shopee. Có lúc Shopee chỉ trả mã ảnh, thì ghép thành đường dẫn đầy đủ trên máy chủ ảnh của Shopee."""
+    gia_tri = (gia_tri or "").strip()
+    if not gia_tri:
+        return ""
+    if gia_tri.startswith("//"):
+        return "https:" + gia_tri
+    if gia_tri.startswith("http"):
+        return gia_tri
+    return "https://down-vn.img.susercontent.com/file/" + gia_tri
+
+
 def doi_loai_shop(gia_tri) -> list:
     """Shopee trả loại shop dạng số hoặc danh sách số: 1 = Shopee Mall, 2 = Shop Yêu thích, 4 = Shop Yêu thích+."""
     ds = gia_tri if isinstance(gia_tri, list) else [gia_tri]
@@ -208,7 +229,7 @@ def ghi_nhan_san_pham(sp: dict, ten_nhom: str, thong_tin: dict, ngay: date, vao_
         "ten": sp.get("productName", "") or cu.get("ten", ""),
         "gia": doi_so(sp.get("priceMin")) or cu.get("gia", 0),
         "danh_gia": doi_so(sp.get("ratingStar")),
-        "anh": sp.get("imageUrl", "") or cu.get("anh", ""),
+        "anh": chuan_anh(sp.get("imageUrl")) or cu.get("anh", ""),   # ảnh thật người bán đăng trên Shopee
         "duong_dan": sp.get("offerLink") or sp.get("productLink") or cu.get("duong_dan", ""),
         "cua_hang": sp.get("shopName", "") or cu.get("cua_hang", ""),
         "ma_shop": str(sp.get("shopId") or cu.get("ma_shop") or ""),
@@ -488,20 +509,30 @@ def gan_lien_ket_gian_hang(phan_tich: dict, ham_lien_ket_shop):
     for nhom in phan_tich["nhom"].values():
         for gh in nhom.get("gian_hang", []):
             ma = gh.get("ma_shop")
-            lien_ket = da_luu.get(ma) if ma else None
-            if ma and not lien_ket and so_moi < SO_LIEN_KET_MOI_TOI_DA and loi_lien_tiep < 5:
+            luu = da_luu.get(ma) if ma else None
+            if isinstance(luu, str):                      # bản lưu cũ chỉ có link
+                luu = {"lien_ket": luu, "logo": ""}
+            # Chưa có link, hoặc bản lưu cũ chưa từng thử lấy logo thì hỏi Shopee
+            if ma and (not luu or not luu.get("da_thu_logo")) and so_moi < SO_LIEN_KET_MOI_TOI_DA and loi_lien_tiep < 5:
                 try:
-                    lien_ket = ham_lien_ket_shop(ma)
-                    da_luu[ma] = lien_ket
+                    luu = ham_lien_ket_shop(ma)
+                    if isinstance(luu, str):
+                        luu = {"lien_ket": luu, "logo": ""}
+                    luu["da_thu_logo"] = True
+                    da_luu[ma] = luu
                     so_moi += 1
                     loi_lien_tiep = 0
                     time.sleep(NGHI_KHI_HOI_TUNG_SAN_PHAM)
                 except Exception as loi:
+                    luu = da_luu.get(ma) if isinstance(da_luu.get(ma), dict) else None   # giữ link cũ nếu có
                     loi_lien_tiep += 1
                     if loi_lien_tiep == 5:
                         print(f"  Không tạo được link gian hàng ({loi}). Tạm dùng link sản phẩm của gian hàng.")
+            lien_ket = (luu or {}).get("lien_ket")
             gh["lien_ket"] = lien_ket or gh.get("lien_ket_san_pham") or ""
             gh["la_link_gian_hang"] = bool(lien_ket)
+            # Ảnh gian hàng: logo thật của gian hàng; chưa có logo thì dùng ảnh thật sản phẩm bán chạy nhất của gian hàng
+            gh["logo"] = (luu or {}).get("logo") or ""
     ghi_json(FILE_LIEN_KET_SHOP, da_luu)
     if so_moi:
         print(f"Đã tạo {so_moi} link gian hàng mới.")

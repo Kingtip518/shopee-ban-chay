@@ -196,7 +196,12 @@
   .the-sp { all: unset; box-sizing: border-box; cursor: pointer; background: var(--mat); border: 1px solid var(--vien); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
   .the-sp:hover { border-color: #cfc5ff; box-shadow: var(--bong-noi); transform: translateY(-2px); }
   .the-sp:focus-visible { outline: 3px solid var(--tim); }
-  .anh-sp { position: relative; aspect-ratio: 1 / 1; background: color-mix(in srgb, var(--m) 13%, #fff); display: grid; place-items: center; font-size: 52px; }
+  .anh-sp { position: relative; aspect-ratio: 1 / 1; background: #f4f5f9; display: grid; place-items: center; }
+  .chua-anh { display: grid; place-items: center; gap: 4px; color: #a3a8bd; font-size: 12px; font-weight: 500; text-align: center; line-height: 1.2; }
+  .chua-anh svg { width: 30%; max-width: 40px; min-width: 18px; height: auto; }
+  .anh-nho { width: 40px; height: 40px; border-radius: 10px; background: #f4f5f9; display: grid; place-items: center; color: #a3a8bd; flex: none; overflow: hidden; position: relative; }
+  .anh-nho img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .anh-nho svg { width: 20px; height: 20px; }
   .anh-sp img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .tem { position: absolute; left: 10px; top: 10px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 800; color: #fff; box-shadow: 0 6px 14px -6px rgba(0,0,0,.4); }
   .tem.bung_no { background: linear-gradient(120deg, #ff6a1f, #ff3d5c); }
@@ -255,7 +260,9 @@
   .gh { display: grid; grid-template-columns: 34px 52px minmax(0, 1fr) auto; gap: 12px; align-items: center; background: #fff; border-radius: 14px; padding: 10px 12px 10px 10px; box-shadow: 0 1px 2px rgba(29,31,51,.05); }
   .gh + .gh { margin-top: 8px; }
   .gh .huy { width: 32px; height: 32px; font-size: 14px; }
-  .gh .anh-gh { width: 52px; height: 52px; border-radius: 12px; overflow: hidden; display: grid; place-items: center; font-size: 24px; background: color-mix(in srgb, var(--m) 14%, #fff); position: relative; }
+  .gh .anh-gh { width: 52px; height: 52px; border-radius: 12px; overflow: hidden; display: grid; place-items: center; background: #f4f5f9; color: #a3a8bd; position: relative; }
+  .gh .anh-gh svg { width: 22px; height: 22px; }
+  .gh .anh-gh.logo { border-radius: 50%; box-shadow: inset 0 0 0 1px var(--vien); }
   .gh .anh-gh img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .gh .ten-gh { font-weight: 800; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .gh .chi-tiet-gh { font-size: 12.5px; color: var(--phu); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -403,6 +410,13 @@ const NGANH = {
 };
 const nganh = ten => NGANH[ten] || ["🛍️", "#6a4cff"];
 const oBt = (ten, nho) => { const [bt, m] = nganh(ten); return `<span class="o-bt${nho ? " nho" : ""}" style="--m:${m}" aria-hidden="true">${bt}</span>`; };
+
+// ---------- Ảnh: chỉ dùng ảnh thật lấy từ Shopee; không có ảnh thì ghi rõ "Chưa có ảnh", không thay bằng hình khác ----------
+const ICON_ANH = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.8"/><path d="m21 16-5-5-9 8"/></svg>`;
+const CHUA_ANH = `<span class="chua-anh">${ICON_ANH}<span>Chưa có ảnh</span></span>`;
+// Ảnh lỗi (link hỏng) thì gỡ ảnh đi, để lộ ô "Chưa có ảnh" phía sau
+const anhThat = url => url ? `<img src="${anToan(url)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : "";
+const anhNho = url => `<span class="anh-nho">${ICON_ANH}${anhThat(url)}</span>`;
 
 // ---------- Tiện ích ----------
 const soVN = n => Math.round(n).toLocaleString("vi-VN");
@@ -552,8 +566,7 @@ function theSp(sp, tem, loaiTem, phu) {
   ghiNho(sp);
   const p = pt().san_pham[sp.ma], [bt, m] = nganh(sp.nhom);
   return `<button class="the-sp" data-sp="${anToan(sp.ma)}">
-    <div class="anh-sp" style="--m:${m}"><span aria-hidden="true">${bt}</span>
-      ${sp.anh ? `<img src="${anToan(sp.anh)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}
+    <div class="anh-sp">${CHUA_ANH}${anhThat(sp.anh)}
       ${tem ? `<span class="tem ${loaiTem}">${tem}</span>` : ""}</div>
     <div class="noi-dung"><div class="ten-sp">${anToan(sp.ten)}</div>
       <div class="gia">${tienGon(sp.gia)}</div>
@@ -642,7 +655,7 @@ function khoiGianHang(ten) {
                    .map(x => `<span class="the-shop ${x}">${TEN_SHOP[x]}</span>`).join("");
       const link = g.lien_ket && /^https?:\/\//.test(g.lien_ket) ? g.lien_ket : "";
       return `<div class="gh${link ? "" : " khong-link"}">${huy(i)}
-        <span class="anh-gh" style="--m:${m}">${bt}${g.anh ? `<img src="${anToan(g.anh)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}</span>
+        <span class="anh-gh${g.logo ? " logo" : ""}" title="${g.logo ? "Ảnh đại diện của gian hàng" : "Ảnh sản phẩm bán chạy nhất của gian hàng"}">${ICON_ANH}${anhThat(g.logo || g.anh)}</span>
         <div style="min-width:0"><div class="ten-gh">${nhan}${anToan(g.ten)}</div>
           <div class="chi-tiet-gh"><span style="color:#f5a524">★</span> ${soLe(g.danh_gia)} · ${soVN(g.so_ban_7_ngay)} sp bán 7 ngày · ${g.so_sp_ban_chay} sản phẩm bán chạy</div>
           ${g.sp_noi_bat ? `<div class="chi-tiet-gh">Nổi bật: ${anToan(g.sp_noi_bat)}</div>` : ""}</div>
@@ -686,7 +699,7 @@ function moPhanTichSp(ma) {
   const p = pt().san_pham[ma], gd = p ? p.giai_doan : null, giaNhom = pt().nhom[sp.nhom]?.khoang_gia, [bt, m] = nganh(sp.nhom);
   const lienKet = sp.duong_dan && /^https?:\/\//.test(sp.duong_dan) ? sp.duong_dan : null;
   const ketLuan = p && p.loi_khuyen.nguoi_ban[0];
-  moBang(`<div class="pt-dau">${sp.anh ? `<img src="${anToan(sp.anh)}" alt="" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">` : oBt(sp.nhom)}
+  moBang(`<div class="pt-dau"><span class="anh-nho" style="width:60px;height:60px;border-radius:14px;background:#fff">${ICON_ANH}${anhThat(sp.anh)}</span>
       <div style="min-width:0"><h2 style="font-size:18px">${anToan(sp.ten)}</h2><div class="ds-chip">${chip(gd)}${(h => h ? `<span class="chip xam">#${h.nganh} trong ${anToan(sp.nhom)}</span><span class="chip xam">#${h.chung} / ${h.tongChung} sản phẩm</span>` : `<span class="chip xam">${bt} ${anToan(sp.nhom)}</span>`)(hangSp(ma))}</div></div>${nutDong()}</div>
     <div class="pt-than">
       ${ketLuan ? `<div class="ket-luan"><span class="phu">Kết luận</span><b>${anToan(ketLuan)}</b></div>` : ""}
@@ -788,7 +801,7 @@ function veKetQua() {
   if (kq.sp.length) html += `<h4><span>Sản phẩm</span><span>hạng trong ngành, 7 ngày</span></h4>` + kq.sp.map(s => {
     const h = hangSp(s.ma), [bt, m] = nganh(s.nhom);
     const hang = h ? hangSo(h.nganh) + `<span class="phu">#${h.chung} toàn bộ</span>` : `<span class="phu">${tienGon(s.gia)}</span>`;
-    return `<button class="kq" role="option" data-sp="${anToan(s.ma)}">${s.anh ? `<img src="${anToan(s.anh)}" alt="" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'o-bt',textContent:'${bt}',style:'--m:${m}'}))">` : oBt(s.nhom)}
+    return `<button class="kq" role="option" data-sp="${anToan(s.ma)}">${anhNho(s.anh)}
       <div style="min-width:0"><div class="ten-kq">${toSang(s.ten, tu)}</div><div class="phu-kq">${tienGon(s.gia)} · ${anToan(s.cua_hang || s.nhom)}</div></div>
       <div class="hang-kq">${hang}</div></button>`;
   }).join("");

@@ -292,7 +292,7 @@ def tinh_gian_hang_uy_tin(ban_theo_sp: dict, thong_tin: dict) -> list:
             "ten": g["ten"], "ma_shop": g["ma_shop"], "loai": sorted(g["loai"]),
             "so_ban_7_ngay": round(g["so_ban"]), "danh_gia": round(sao, 2), "so_sp_ban_chay": g["so_sp"],
             "diem": round(g["so_ban"] * hs * (sao / 5) ** 4, 1),
-            "sp_noi_bat": sp_dau.get("ten", ""), "anh": sp_dau.get("anh", ""),
+            "sp_noi_bat": sp_dau.get("ten", ""), "anh": sp_dau.get("anh", ""),   # ảnh thật sản phẩm bán chạy nhất của gian hàng
             "lien_ket_san_pham": sp_dau.get("duong_dan", ""),
         })
     ket_qua.sort(key=lambda x: x["diem"], reverse=True)

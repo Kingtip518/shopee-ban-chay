@@ -9,6 +9,7 @@
 - **Nên quảng bá:** sản phẩm mang lại hoa hồng ước tính cao nhất 7 ngày qua, kèm link tiếp thị liên kết.
 - **Ngày siêu sale** (file `ngay_khuyen_mai.json`): không dùng để gắn tín hiệu và so sánh bùng nổ, tránh báo động giả.
 - **Bảng phân tích:** bấm vào nhóm hàng hoặc sản phẩm để xem giai đoạn, biểu đồ 30 ngày, độ cạnh tranh, khoảng giá, phân tích từng loại hàng trong nhóm, và lời khuyên cho người bán, người làm tiếp thị liên kết.
+- **Gian hàng uy tín:** mỗi ngành hàng có 5 gian hàng uy tín (Shopee Mall, Shop Yêu thích, từ 4,7 sao, bán từ 30 sản phẩm trong 7 ngày) kèm nút "Vào gian hàng" dẫn qua link tiếp thị liên kết. Link gian hàng được lưu trong `du_lieu/lien_ket_shop.json` để không phải tạo lại.
 - Gửi tóm tắt về Telegram.
 
 ## Lưu ý quan trọng về số liệu
