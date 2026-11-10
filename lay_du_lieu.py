@@ -84,8 +84,9 @@ CAC_KY = [
 
 TRUONG_CO_BAN = ("itemId productName priceMin priceMax sales ratingStar imageUrl "
                  "offerLink productLink shopName productCatIds")
-TRUONG_HOA_HONG = " commissionRate"
-co_lay_hoa_hong = True   # nếu Shopee không trả trường hoa hồng thì tự tắt, vẫn chạy tiếp phần còn lại
+# Các trường có thể Shopee không trả (tùy tài khoản). Trường nào bị Shopee báo lỗi thì tự bỏ, vẫn chạy tiếp.
+TRUONG_TUY_CHON = ["commissionRate", "shopId", "shopType"]
+truong_bi_bo = set()
 
 
 # ======================= HỎI DỮ LIỆU SHOPEE =======================
@@ -109,20 +110,29 @@ def hoi_shopee(cau_hoi: str) -> dict:
 
 
 def hoi_danh_sach_san_pham(dieu_kien: str) -> list:
-    """Hỏi Shopee danh sách sản phẩm. Lần đầu có xin cả tỷ lệ hoa hồng;
-    nếu Shopee không chấp nhận trường này thì hỏi lại không có hoa hồng và bỏ trường đó từ đó về sau."""
-    global co_lay_hoa_hong
-    truong = TRUONG_CO_BAN + (TRUONG_HOA_HONG if co_lay_hoa_hong else "")
+    """Hỏi Shopee danh sách sản phẩm, xin thêm các trường tùy chọn (hoa hồng, mã shop, loại shop).
+    Trường nào Shopee không chấp nhận thì bỏ trường đó và hỏi lại."""
+    them = [t for t in TRUONG_TUY_CHON if t not in truong_bi_bo]
+    truong = TRUONG_CO_BAN + "".join(" " + t for t in them)
     cau_hoi = "{productOfferV2(%s){nodes{%s}pageInfo{page limit hasNextPage}}}" % (dieu_kien, truong)
     try:
         du_lieu = hoi_shopee(cau_hoi)
     except RuntimeError as loi:
-        if co_lay_hoa_hong and "commission" in str(loi).lower():
-            print("  Shopee không trả tỷ lệ hoa hồng, tiếp tục chạy không có hoa hồng.")
-            co_lay_hoa_hong = False
+        bao_loi = str(loi)
+        loi_truong = [t for t in them if t in bao_loi]
+        if loi_truong:
+            print(f"  Shopee không trả trường {', '.join(loi_truong)}, bỏ trường này và chạy tiếp.")
+            truong_bi_bo.update(loi_truong)
             return hoi_danh_sach_san_pham(dieu_kien)
         raise
     return du_lieu["productOfferV2"]["nodes"] or []
+
+
+def tao_lien_ket_shop(ma_shop: str) -> str:
+    """Tạo link tiếp thị liên kết dẫn tới trang gian hàng (người xem mua trong gian hàng thì Tú có hoa hồng)."""
+    dia_chi = f"https://shopee.vn/shop/{int(ma_shop)}"
+    du_lieu = hoi_shopee('mutation{generateShortLink(input:{originUrl:"%s",subIds:["radar","gianhang"]}){shortLink}}' % dia_chi)
+    return du_lieu["generateShortLink"]["shortLink"]
 
 
 def lay_theo_tu_khoa(tu_khoa: str, trang: int) -> list:
@@ -172,6 +182,13 @@ def doi_so(gia_tri) -> float:
         return 0.0
 
 
+def doi_loai_shop(gia_tri) -> list:
+    """Shopee trả loại shop dạng số hoặc danh sách số: 1 = Shopee Mall, 2 = Shop Yêu thích, 4 = Shop Yêu thích+."""
+    ds = gia_tri if isinstance(gia_tri, list) else [gia_tri]
+    ten = {1: "mall", 2: "yeu_thich", 4: "yeu_thich_plus"}
+    return [ten[int(x)] for x in ds if str(x).lstrip("-").isdigit() and int(x) in ten]
+
+
 def doi_ty_le_hoa_hong(gia_tri):
     """Shopee có thể trả '0.05' (nghĩa là 5%) hoặc '5'. Đưa về dạng phần trăm, ví dụ 5.0."""
     if gia_tri in (None, ""):
@@ -194,6 +211,8 @@ def ghi_nhan_san_pham(sp: dict, ten_nhom: str, thong_tin: dict, ngay: date, vao_
         "anh": sp.get("imageUrl", "") or cu.get("anh", ""),
         "duong_dan": sp.get("offerLink") or sp.get("productLink") or cu.get("duong_dan", ""),
         "cua_hang": sp.get("shopName", "") or cu.get("cua_hang", ""),
+        "ma_shop": str(sp.get("shopId") or cu.get("ma_shop") or ""),
+        "loai_shop": doi_loai_shop(sp.get("shopType")) if sp.get("shopType") is not None else cu.get("loai_shop", []),
         # Sản phẩm giữ nhóm được gán lần đầu, tránh nhảy nhóm khi nằm trong nhiều từ khóa
         "nhom": cu.get("nhom", ten_nhom),
         "tu_khoa": cu.get("tu_khoa", tu_khoa),   # loại hàng (từ khóa tìm thấy lần đầu)
@@ -457,7 +476,39 @@ def tinh_nen_quang_ba(ky_tuan: dict, thong_tin: dict) -> dict:
     return {"ly_do_bo_qua": None, "so_ngay": ky_tuan["so_ngay_co_du_lieu"], "san_pham": ds[:SO_SAN_PHAM_NEN_QUANG_BA]}
 
 
-def tinh_xep_hang(ngay: date):
+FILE_LIEN_KET_SHOP = THU_MUC_DU_LIEU / "lien_ket_shop.json"
+SO_LIEN_KET_MOI_TOI_DA = 150   # mỗi đêm tạo tối đa 150 link gian hàng mới (link cũ được lưu lại dùng tiếp)
+
+
+def gan_lien_ket_gian_hang(phan_tich: dict, ham_lien_ket_shop):
+    """Mỗi gian hàng uy tín cần một link tiếp thị liên kết. Ưu tiên link trang gian hàng;
+    không tạo được thì dùng link sản phẩm bán chạy nhất của gian hàng đó (vẫn tính hoa hồng)."""
+    da_luu = doc_json(FILE_LIEN_KET_SHOP, {})
+    so_moi, loi_lien_tiep = 0, 0
+    for nhom in phan_tich["nhom"].values():
+        for gh in nhom.get("gian_hang", []):
+            ma = gh.get("ma_shop")
+            lien_ket = da_luu.get(ma) if ma else None
+            if ma and not lien_ket and so_moi < SO_LIEN_KET_MOI_TOI_DA and loi_lien_tiep < 5:
+                try:
+                    lien_ket = ham_lien_ket_shop(ma)
+                    da_luu[ma] = lien_ket
+                    so_moi += 1
+                    loi_lien_tiep = 0
+                    time.sleep(NGHI_KHI_HOI_TUNG_SAN_PHAM)
+                except Exception as loi:
+                    loi_lien_tiep += 1
+                    if loi_lien_tiep == 5:
+                        print(f"  Không tạo được link gian hàng ({loi}). Tạm dùng link sản phẩm của gian hàng.")
+            gh["lien_ket"] = lien_ket or gh.get("lien_ket_san_pham") or ""
+            gh["la_link_gian_hang"] = bool(lien_ket)
+    ghi_json(FILE_LIEN_KET_SHOP, da_luu)
+    if so_moi:
+        print(f"Đã tạo {so_moi} link gian hàng mới.")
+
+
+def tinh_xep_hang(ngay: date, ham_lien_ket_shop=None):
+    ham_lien_ket_shop = ham_lien_ket_shop or tao_lien_ket_shop
     anh_chup = doc_tat_ca_anh_chup()
     thong_tin = doc_json(FILE_SAN_PHAM, {})
     ngay_sale = doc_ngay_khuyen_mai()
@@ -499,6 +550,7 @@ def tinh_xep_hang(ngay: date):
     ma_can.update(s["ma"] for s in bang["bung_no"]["san_pham"])
     ma_can.update(s["ma"] for s in nen_quang_ba["san_pham"])
     bang["phan_tich"] = phan_tich_toan_bo(ngay, anh_chup, thong_tin, ngay_sale, ma_can)
+    gan_lien_ket_gian_hang(bang["phan_tich"], ham_lien_ket_shop)
 
     ghi_json(FILE_XEP_HANG, bang, gon=True)
     return bang
@@ -583,11 +635,11 @@ def ngay_can_ghi() -> date:
     return (bay_gio - timedelta(hours=6)).date()
 
 
-def chay(ngay: date = None, ham_theo_tu_khoa=lay_theo_tu_khoa, ham_theo_ma=lay_theo_ma, gui_tin=True):
+def chay(ngay: date = None, ham_theo_tu_khoa=lay_theo_tu_khoa, ham_theo_ma=lay_theo_ma, gui_tin=True, ham_lien_ket_shop=None):
     ngay = ngay or ngay_can_ghi()
     print(f"=== Bắt đầu cập nhật, tính đến hết ngày {ngay.isoformat()} ===")
     thu_thap(ngay, ham_theo_tu_khoa, ham_theo_ma)
-    bang = tinh_xep_hang(ngay)
+    bang = tinh_xep_hang(ngay, ham_lien_ket_shop)
     if gui_tin:
         gui_telegram(bang)
     print("=== Xong ===")

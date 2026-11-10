@@ -29,7 +29,13 @@ THOAI_TRAO_TUAN = -15         # giảm từ 15% trở lên so với tuần trư�
 CANH_TRANH_CAO = 60           # 3 shop đầu chiếm từ 60% trở lên → cạnh tranh cao (vài shop lớn nắm thị trường)
 CANH_TRANH_THAP = 35          # 3 shop đầu chiếm dưới 35% → cạnh tranh thấp (nhiều shop cùng chia, dễ chen chân)
 
-SO_NGAY_NHAC_SALE = 21        # nhắc ngày siêu sale nếu còn trong vòng 21 ngày tới
+SO_NGAY_NHAC_SALE = 21
+
+# Gian hàng uy tín cho từng ngành (để gắn link tiếp thị liên kết)
+SO_GIAN_HANG_MOI_NGANH = 5      # mỗi ngành hiện 5 gian hàng uy tín nhất
+DANH_GIA_TOI_THIEU = 4.7        # điểm đánh giá trung bình phải từ 4,7 sao (Shopee Mall: từ 4,5 sao)
+DANH_GIA_TOI_THIEU_MALL = 4.5
+SO_BAN_TOI_THIEU_7_NGAY = 30    # phải bán được ít nhất 30 sản phẩm trong 7 ngày qua        # nhắc ngày siêu sale nếu còn trong vòng 21 ngày tới
 
 GIAI_DOAN = {
     "moi_noi":    {"ten": "Mới nổi",          "mau": "len"},
@@ -252,6 +258,45 @@ def loi_khuyen_san_pham(sp: dict, gd: dict, gia_nhom: dict, phan_tram_trong_nhom
     return {"nguoi_ban": nguoi_ban, "tiep_thi": tiep_thi}
 
 
+def tinh_gian_hang_uy_tin(ban_theo_sp: dict, thong_tin: dict) -> list:
+    """Gom số bán 7 ngày theo gian hàng, lọc gian hàng uy tín, xếp theo điểm uy tín.
+    Điểm uy tín = số bán × hệ số loại shop × (điểm đánh giá / 5) mũ 4.
+    Hệ số loại shop: Shopee Mall 1,6; Shop Yêu thích+ 1,4; Shop Yêu thích 1,25; shop thường 1."""
+    gom = {}
+    for ma, sb in ban_theo_sp.items():
+        tt = thong_tin.get(ma, {})
+        ten = tt.get("cua_hang")
+        if sb <= 0 or not ten:
+            continue
+        g = gom.setdefault(tt.get("ma_shop") or ten, {"ten": ten, "ma_shop": tt.get("ma_shop") or "", "loai": set(),
+                                                      "so_ban": 0, "tong_sao": 0.0, "so_sp": 0, "sp_dau": None})
+        g["so_ban"] += sb
+        g["so_sp"] += 1
+        g["tong_sao"] += sb * (tt.get("danh_gia") or 0)
+        g["loai"].update(tt.get("loai_shop") or [])
+        if not g["sp_dau"] or sb > g["sp_dau"][0]:
+            g["sp_dau"] = (sb, ma)
+    he_so = {"mall": 1.6, "yeu_thich_plus": 1.4, "yeu_thich": 1.25}
+    ket_qua = []
+    for g in gom.values():
+        sao = g["tong_sao"] / g["so_ban"] if g["so_ban"] else 0
+        la_mall = "mall" in g["loai"]
+        dat = sao >= (DANH_GIA_TOI_THIEU_MALL if la_mall else DANH_GIA_TOI_THIEU) and g["so_ban"] >= SO_BAN_TOI_THIEU_7_NGAY
+        if not dat:
+            continue
+        hs = max([he_so.get(x, 1.0) for x in g["loai"]] + [1.0])
+        sp_dau = thong_tin.get(g["sp_dau"][1], {})
+        ket_qua.append({
+            "ten": g["ten"], "ma_shop": g["ma_shop"], "loai": sorted(g["loai"]),
+            "so_ban_7_ngay": round(g["so_ban"]), "danh_gia": round(sao, 2), "so_sp_ban_chay": g["so_sp"],
+            "diem": round(g["so_ban"] * hs * (sao / 5) ** 4, 1),
+            "sp_noi_bat": sp_dau.get("ten", ""), "anh": sp_dau.get("anh", ""),
+            "lien_ket_san_pham": sp_dau.get("duong_dan", ""),
+        })
+    ket_qua.sort(key=lambda x: x["diem"], reverse=True)
+    return ket_qua[:SO_GIAN_HANG_MOI_NGANH]
+
+
 def ket_luan_ngan(gd: dict, ct: dict) -> str:
     """Một câu kết luận nhanh cho từng loại hàng trong nhóm."""
     ma, muc = gd["ma"], ct.get("muc")
@@ -311,6 +356,7 @@ def phan_tich_toan_bo(ngay: date, anh_chup: dict, thong_tin: dict, ngay_sale: di
             "khoang_gia": tinh_khoang_gia(ban7, thong_tin),
             "bieu_do": dang_bieu_do(chuoi_nhom[nhom]),
             "ban_7_ngay": round(sum(ban7.values())),
+            "gian_hang": tinh_gian_hang_uy_tin(ban7, thong_tin),
         }
     # Từng loại hàng (theo từ khóa) trong mỗi nhóm
     chuoi_loai, ban_7_theo_loai = {}, {}

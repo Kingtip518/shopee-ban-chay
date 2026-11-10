@@ -6,200 +6,285 @@
 <title>Radar Hàng Bán Chạy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --nen: #eef1f4; --mat: #ffffff; --muc: #17202b; --phu: #5c6773; --vien: #d8dee5; --vien-nhe: #e8ecf0;
-    --chinh: #2f3a8f; --chinh-nhat: #e6e8f6;
-    --tang: #0f7f63; --tang-nhat: #ddf1ea; --giam: #b93d29; --giam-nhat: #f8e3df; --canh: #9a6512; --canh-nhat: #f6ecd9;
-    --xam-nhat: #eef1f4; --cot: #6f79c9; --cot-sale: #c5ccd4;
-    --man: rgba(15, 22, 34, .5); --bong: 0 1px 2px rgba(23, 32, 43, .06), 0 8px 24px rgba(23, 32, 43, .06);
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --nen: #0f141b; --mat: #171e27; --muc: #e7ecf2; --phu: #93a0ae; --vien: #2a3441; --vien-nhe: #222b36;
-      --chinh: #9aa5ff; --chinh-nhat: #232a4d;
-      --tang: #4fd1a5; --tang-nhat: #123229; --giam: #ff8a73; --giam-nhat: #3a1f1a; --canh: #e9b45c; --canh-nhat: #352915;
-      --xam-nhat: #1d252f; --cot: #8691ea; --cot-sale: #3b4654; --man: rgba(0, 0, 0, .6); --bong: 0 1px 2px rgba(0,0,0,.3);
-    }
-  }
-  :root[data-theme="dark"] {
-    --nen: #0f141b; --mat: #171e27; --muc: #e7ecf2; --phu: #93a0ae; --vien: #2a3441; --vien-nhe: #222b36;
-    --chinh: #9aa5ff; --chinh-nhat: #232a4d;
-    --tang: #4fd1a5; --tang-nhat: #123229; --giam: #ff8a73; --giam-nhat: #3a1f1a; --canh: #e9b45c; --canh-nhat: #352915;
-    --xam-nhat: #1d252f; --cot: #8691ea; --cot-sale: #3b4654; --man: rgba(0, 0, 0, .6); --bong: 0 1px 2px rgba(0,0,0,.3);
+    color-scheme: light;
+    --nen: #f3f4fa; --mat: #ffffff; --muc: #1d1f33; --phu: #6b7088; --vien: #e3e5ef; --vien-nhe: #eef0f6;
+    --cam: #ff5b1f; --hong: #ec2f7c; --tim: #6a4cff;
+    --tang: #0e9f6e; --tang-nhat: #e2f6ee; --giam: #e5484d; --giam-nhat: #fde8e8; --canh: #c27c00; --canh-nhat: #fff3d6;
+    --xam-nhat: #f1f2f8;
+    --man: rgba(24, 20, 48, .45);
+    --bong: 0 1px 2px rgba(29, 31, 51, .05), 0 10px 28px -12px rgba(29, 31, 51, .18);
+    --bong-noi: 0 18px 40px -16px rgba(106, 76, 255, .45);
   }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
   body { margin: 0; background: var(--nen); color: var(--muc); font: 15px/1.55 "Be Vietnam Pro", system-ui, sans-serif; }
   body.khoa-cuon { overflow: hidden; }
   button { font: inherit; color: inherit; }
-  :focus-visible { outline: 2px solid var(--chinh); outline-offset: 2px; border-radius: 6px; }
-  .so { font-family: "Archivo", system-ui, sans-serif; font-variant-numeric: tabular-nums; font-stretch: 88%; }
+  :focus-visible { outline: 3px solid var(--tim); outline-offset: 2px; border-radius: 8px; }
   .phu { color: var(--phu); font-size: 13px; }
 
-  /* ---------- Thanh trên ---------- */
-  .thanh-tren { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--mat) 92%, transparent);
-                backdrop-filter: blur(8px); border-bottom: 1px solid var(--vien); }
-  .thanh-tren .trong { max-width: 1240px; margin: 0 auto; padding: 10px 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  /* ================= THANH TRÊN ================= */
+  .thanh-tren { position: sticky; top: 0; z-index: 5; background: rgba(255, 255, 255, .92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--vien); }
+  .thanh-tren .trong { max-width: 1240px; margin: 0 auto; padding: 10px 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
   .hieu { display: flex; align-items: center; gap: 10px; margin-right: auto; }
-  .hieu svg { flex: none; }
-  .hieu b { font-family: "Archivo", sans-serif; font-stretch: 80%; font-weight: 800; font-size: 20px; letter-spacing: -.01em; }
+  .logo { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; flex: none;
+          background: linear-gradient(135deg, var(--cam), var(--hong) 55%, var(--tim)); box-shadow: 0 6px 16px -6px rgba(236, 47, 124, .6); }
+  .hieu b { font-weight: 800; font-size: 19px; letter-spacing: -.02em; }
   .hieu .phu { display: block; font-size: 12px; line-height: 1.3; }
-  .chon { display: inline-flex; background: var(--xam-nhat); border-radius: 9px; padding: 3px; gap: 2px; }
-  .chon button { border: 0; background: none; padding: 6px 12px; border-radius: 7px; cursor: pointer; color: var(--phu); font-weight: 500; font-size: 14px; }
-  .chon button[aria-pressed="true"] { background: var(--mat); color: var(--muc); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+  .chon { display: inline-flex; background: var(--xam-nhat); border-radius: 999px; padding: 4px; gap: 2px; }
+  .chon button { border: 0; background: none; padding: 6px 14px; border-radius: 999px; cursor: pointer; color: var(--phu); font-weight: 600; font-size: 14px; }
+  .chon button[aria-pressed="true"] { background: var(--muc); color: #fff; }
 
-  .khung { max-width: 1240px; margin: 0 auto; padding: 22px 20px 64px; }
+  /* ================= BĂNG RÔN ĐẦU TRANG ================= */
+  .bang-ron { position: relative; overflow: hidden; color: #fff; background: linear-gradient(115deg, #ff6a1f 0%, #f23d79 46%, #6a4cff 100%); }
+  .bang-ron::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5;
+    background-image: radial-gradient(rgba(255,255,255,.35) 1.2px, transparent 1.4px); background-size: 26px 26px;
+    mask-image: radial-gradient(ellipse at 30% 30%, #000, transparent 70%); -webkit-mask-image: radial-gradient(ellipse at 30% 30%, #000, transparent 70%); }
+  .bang-ron::after { content: ""; position: absolute; width: 520px; height: 520px; right: -140px; bottom: -300px; border-radius: 50%;
+                     background: radial-gradient(circle, rgba(255, 213, 79, .55), transparent 65%); pointer-events: none; }
+  .bang-ron .trong { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 30px 20px 64px;
+                     display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+  .nhan-ngay { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3);
+               padding: 5px 12px; border-radius: 999px; font-size: 13px; font-weight: 600; }
+  .nhan-ngay i { width: 8px; height: 8px; border-radius: 50%; background: #ffe066; box-shadow: 0 0 0 4px rgba(255, 224, 102, .3); }
+  .bang-ron h1 { font-weight: 900; font-size: clamp(30px, 4.4vw, 52px); line-height: 1.06; letter-spacing: -.035em; margin: 14px 0 0; max-width: 17ch; text-wrap: balance; }
+  .bang-ron .dien-giai { margin: 12px 0 0; color: rgba(255,255,255,.9); max-width: 54ch; font-size: 16px; }
+  .dai-len { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .the-len { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px 6px 6px; border-radius: 999px;
+             background: rgba(255,255,255,.95); color: var(--muc); font-size: 13.5px; font-weight: 600; box-shadow: 0 4px 14px -6px rgba(0,0,0,.35); }
+  .the-len:hover { transform: translateY(-1px); }
+  .the-len:focus-visible { outline: 3px solid #fff; }
+  .the-len .bt { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-size: 15px; }
+  .the-len b { color: var(--tang); font-weight: 800; }
 
-  /* ---------- Thông báo ---------- */
-  .bao { border-radius: 10px; padding: 9px 14px; font-size: 14px; margin-bottom: 10px; background: var(--canh-nhat); color: var(--canh); }
-  .bao.sale { background: var(--chinh-nhat); color: var(--chinh); }
+  /* Bục top 3 */
+  .buc { background: #fff; color: var(--muc); border-radius: 22px; padding: 16px; box-shadow: 0 30px 60px -24px rgba(40, 10, 80, .55); }
+  .buc h2 { font-size: 15px; font-weight: 700; margin: 2px 4px 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .buc h2 span { font-size: 12.5px; color: var(--phu); font-weight: 500; margin-left: auto; }
+  .dong-buc { all: unset; box-sizing: border-box; width: 100%; cursor: pointer; display: grid; grid-template-columns: 42px 44px minmax(0, 1fr) auto;
+              gap: 12px; align-items: center; padding: 10px 12px 10px 10px; border-radius: 16px; }
+  .dong-buc + .dong-buc { margin-top: 6px; }
+  .dong-buc:hover { transform: translateX(2px); }
+  .dong-buc:focus-visible { outline: 3px solid var(--tim); }
+  .dong-buc.h1 { background: linear-gradient(90deg, #fff1c2, #fffaf0 70%); }
+  .dong-buc.h2 { background: linear-gradient(90deg, #e9edf7, #fafbfe 70%); }
+  .dong-buc.h3 { background: linear-gradient(90deg, #fde3d2, #fff8f3 70%); }
+  .ten-buc { font-weight: 700; font-size: 15.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ten-buc + .phu { font-size: 12.5px; }
+  .tang-buc { font-weight: 900; font-size: 22px; color: var(--tang); letter-spacing: -.02em; text-align: right; white-space: nowrap; }
+  .tang-buc small { display: block; font-size: 11.5px; font-weight: 500; color: var(--phu); letter-spacing: 0; }
 
-  /* ---------- Bản tin hôm nay ---------- */
-  .ban-tin { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 28px; align-items: end; padding: 18px 0 26px; }
-  .ban-tin .ngay { color: var(--phu); font-size: 14px; margin: 0 0 6px; }
-  .ban-tin h1 { font-family: "Archivo", sans-serif; font-stretch: 78%; font-weight: 700; font-size: clamp(30px, 4.2vw, 50px);
-                line-height: 1.02; letter-spacing: -.02em; margin: 0; max-width: 18ch; text-wrap: balance; }
-  .ban-tin .dien-giai { margin: 12px 0 0; color: var(--phu); max-width: 56ch; }
-  .diem-nhan { display: grid; gap: 1px; background: var(--vien); border: 1px solid var(--vien); border-radius: 14px; overflow: hidden; }
-  .diem-nhan button { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 12px 16px; background: var(--mat); cursor: pointer; }
-  .diem-nhan button:hover { background: var(--xam-nhat); }
-  .diem-nhan button:focus-visible { outline: 2px solid var(--chinh); outline-offset: -2px; }
-  .diem-nhan .nhan-dn { font-size: 13px; color: var(--phu); grid-column: 1 / -1; }
-  .diem-nhan .ten-dn { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .diem-nhan .so-dn { font-family: "Archivo", sans-serif; font-stretch: 85%; font-weight: 700; font-size: 18px; }
+  /* Huy chương */
+  .huy { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; font-size: 16px; position: relative; flex: none; isolation: isolate; }
+  .huy.h1 { background: radial-gradient(circle at 35% 30%, #fff3b0, #ffc531 45%, #d99400); color: #6b4300; box-shadow: 0 6px 14px -4px rgba(217, 148, 0, .7), inset 0 0 0 3px rgba(255,255,255,.55); }
+  .huy.h2 { background: radial-gradient(circle at 35% 30%, #ffffff, #c9cfe0 50%, #8e97b3); color: #2d3450; box-shadow: 0 6px 14px -4px rgba(110, 120, 160, .6), inset 0 0 0 3px rgba(255,255,255,.6); }
+  .huy.h3 { background: radial-gradient(circle at 35% 30%, #ffe2cc, #e2915c 50%, #b05c25); color: #4a1f00; box-shadow: 0 6px 14px -4px rgba(176, 92, 37, .6), inset 0 0 0 3px rgba(255,255,255,.5); }
+  .huy.thuong { background: var(--xam-nhat); color: var(--phu); width: 32px; height: 32px; font-size: 14px; margin: 0 3px; }
 
-  /* ---------- Khối ---------- */
-  .luoi { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 18px; margin-bottom: 18px; }
-  .khoi { background: var(--mat); border: 1px solid var(--vien); border-radius: 16px; box-shadow: var(--bong); min-width: 0; }
-  .khoi-dau { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; padding: 16px 18px 0; }
-  .khoi-dau h2 { font-family: "Archivo", sans-serif; font-stretch: 85%; font-weight: 700; font-size: 20px; margin: 0; letter-spacing: -.01em; }
-  .khoi-dau .phu { flex: 1 1 200px; }
-  .khoi-dau .chon { margin-left: auto; }
-  .khoi-than { padding: 12px 18px 18px; }
-  .trong-rong { color: var(--phu); font-size: 14px; padding: 18px 0; }
+  /* Ô biểu tượng ngành hàng */
+  .o-bt { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; font-size: 22px; flex: none;
+          background: color-mix(in srgb, var(--m) 15%, #fff); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--m) 28%, transparent); }
+  .o-bt.nho { width: 34px; height: 34px; border-radius: 11px; font-size: 17px; }
 
-  /* ---------- Bản đồ cơ hội ---------- */
-  .ban-do svg { width: 100%; height: auto; display: block; }
-  .ban-do .cham { cursor: pointer; }
-  .ban-do .cham:hover circle, .ban-do .cham:focus circle { stroke-width: 2.5; }
-  .ban-do .cham:focus { outline: none; }
-  .chu-thich { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--phu); margin-top: 8px; }
-  .chu-thich i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: 0; }
+  /* ================= KHUNG CHÍNH ================= */
+  .khung { max-width: 1240px; margin: -34px auto 0; padding: 0 20px 64px; position: relative; z-index: 2; }
+  .bao { border-radius: 14px; padding: 10px 14px; font-size: 14px; margin-bottom: 12px; background: #fff; color: #8a5800; font-weight: 500; box-shadow: var(--bong); }
+  .bao.sale { color: var(--hong); }
+  .khoi { background: var(--mat); border: 1px solid var(--vien); border-radius: 22px; box-shadow: var(--bong); min-width: 0; margin-bottom: 18px; }
+  .khoi-dau { display: flex; align-items: center; gap: 10px 14px; flex-wrap: wrap; padding: 18px 20px 4px; }
+  .khoi-dau h2 { font-weight: 800; font-size: 21px; margin: 0; letter-spacing: -.02em; }
+  .khoi-dau .phu { flex: 1 1 220px; }
+  .khoi-than { padding: 12px 20px 20px; }
+  .trong-rong { color: var(--phu); font-size: 14px; padding: 12px 0; }
 
-  /* ---------- Tín hiệu ---------- */
-  .tin-hieu h3 { font-size: 14px; font-weight: 600; margin: 4px 0 6px; display: flex; align-items: center; gap: 6px; }
-  .tin-hieu h3 + .dong-th, .tin-hieu .dong-th + .dong-th { border-top: 1px solid var(--vien-nhe); }
-  .tin-hieu .nhom-th + .nhom-th { margin-top: 14px; }
-  .dong-th { all: unset; box-sizing: border-box; width: 100%; display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; cursor: pointer; font-size: 14px; }
-  .dong-th:hover .ten-th { color: var(--chinh); }
-  .dong-th:focus-visible { outline: 2px solid var(--chinh); }
-  .dong-th .so { color: var(--phu); white-space: nowrap; }
+  /* ================= TÍN HIỆU ================= */
+  .tin-hieu { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+  .o-th { background: var(--mat); border-radius: 20px; box-shadow: var(--bong); overflow: hidden; border: 1px solid var(--vien); }
+  .o-th .dau-th { display: flex; align-items: center; gap: 10px; padding: 13px 16px; color: #fff; font-weight: 700; font-size: 15px; }
+  .o-th .dau-th .tron { width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; background: rgba(255,255,255,.24); font-size: 16px; }
+  .o-th .dau-th small { margin-left: auto; font-weight: 500; font-size: 12px; opacity: .9; }
+  .o-th.len .dau-th { background: linear-gradient(120deg, #0ea36f, #19c3a0); }
+  .o-th.giam .dau-th { background: linear-gradient(120deg, #ff7a1a, #ffae1f); }
+  .o-th.sale .dau-th { background: linear-gradient(120deg, #6a4cff, #ec2f7c); }
+  .o-th .than-th { padding: 4px 16px 10px; }
+  .dong-th { all: unset; box-sizing: border-box; width: 100%; display: flex; align-items: center; gap: 10px; padding: 9px 0; font-size: 14px; cursor: pointer; }
+  .dong-th + .dong-th { border-top: 1px dashed var(--vien); }
+  .dong-th:hover .ten-th { color: var(--tim); }
+  .dong-th:focus-visible { outline: 3px solid var(--tim); }
+  .dong-th .ten-th { font-weight: 600; flex: 1; min-width: 0; }
+  .dong-th .so { color: var(--phu); white-space: nowrap; font-size: 13px; }
+  .dong-th.tinh { cursor: default; }
+  .dem-nguoc { font-weight: 800; color: var(--hong); white-space: nowrap; background: #fde7f1; padding: 3px 10px; border-radius: 999px; font-size: 13px; }
 
-  /* ---------- Bảng xếp hạng ---------- */
-  .bang-xh { width: 100%; border-collapse: collapse; }
-  .bang-xh th { text-align: left; font-weight: 500; font-size: 12.5px; color: var(--phu); padding: 10px 10px 8px; border-bottom: 1px solid var(--vien); white-space: nowrap; }
+  /* ================= BẢNG XẾP HẠNG ================= */
+  .bang-xh { width: 100%; border-collapse: separate; border-spacing: 0 6px; }
+  .bang-xh th { text-align: left; font-weight: 600; font-size: 12.5px; color: var(--phu); padding: 4px 12px; white-space: nowrap; }
   .bang-xh th.phai, .bang-xh td.phai { text-align: right; }
-  .bang-xh td { padding: 10px; border-bottom: 1px solid var(--vien-nhe); vertical-align: middle; }
+  .bang-xh td { padding: 10px 12px; vertical-align: middle; background: var(--mat); border-top: 1px solid var(--vien-nhe); border-bottom: 1px solid var(--vien-nhe); }
+  .bang-xh td:first-child { border-left: 1px solid var(--vien-nhe); border-radius: 16px 0 0 16px; }
+  .bang-xh td:last-child { border-right: 1px solid var(--vien-nhe); border-radius: 0 16px 16px 0; }
   .bang-xh tbody tr { cursor: pointer; }
-  .bang-xh tbody tr:hover td { background: var(--xam-nhat); }
-  .bang-xh tbody tr:focus-visible { outline: 2px solid var(--chinh); outline-offset: -2px; }
-  .bang-xh tbody tr:last-child td { border-bottom: 0; }
+  .bang-xh tbody tr:hover td { background-color: #faf8ff; border-color: #ddd5ff; }
+  .bang-xh tbody tr:focus-visible { outline: 3px solid var(--tim); }
+  .bang-xh tr.top1 td { background-color: #fffaeb; border-color: #ffe6a3; }
+  .bang-xh tr.top2 td { background-color: #f6f8fd; border-color: #dfe4f1; }
+  .bang-xh tr.top3 td { background-color: #fff6f0; border-color: #f7d9c5; }
   .o-hang { display: flex; align-items: center; gap: 8px; }
-  .o-hang .so { font-weight: 700; font-size: 17px; width: 22px; text-align: right; }
-  .doi-hang { font-family: "Archivo", sans-serif; font-size: 12px; font-weight: 700; min-width: 26px; }
-  .doi-hang.len { color: var(--tang); } .doi-hang.xuong { color: var(--giam); } .doi-hang.giu { color: var(--phu); }
-  .ten-xh { font-weight: 600; }
-  .so-chinh { font-family: "Archivo", sans-serif; font-stretch: 88%; font-variant-numeric: tabular-nums; font-weight: 700; font-size: 16px; white-space: nowrap; }
-  .bien-dong { font-family: "Archivo", sans-serif; font-variant-numeric: tabular-nums; font-weight: 600; font-size: 14px; white-space: nowrap; }
-  .bien-dong.len { color: var(--tang); } .bien-dong.xuong { color: var(--giam); }
-
-  .chip { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; white-space: nowrap; line-height: 1.5; }
+  .doi-hang { font-size: 12px; font-weight: 800; padding: 2px 6px; border-radius: 6px; min-width: 30px; text-align: center; }
+  .doi-hang.len { color: var(--tang); background: var(--tang-nhat); }
+  .doi-hang.xuong { color: var(--giam); background: var(--giam-nhat); }
+  .doi-hang.giu { color: var(--phu); }
+  .o-ten { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .ten-xh { font-weight: 700; font-size: 15.5px; }
+  .so-chinh { font-variant-numeric: tabular-nums; font-weight: 800; font-size: 17px; white-space: nowrap; letter-spacing: -.01em; }
+  .thanh-tt { height: 6px; border-radius: 3px; background: var(--xam-nhat); margin-top: 6px; overflow: hidden; width: 120px; margin-left: auto; }
+  .thanh-tt i { display: block; height: 100%; border-radius: 3px; background: var(--m, var(--tim)); }
+  .vien-thuoc { display: inline-flex; align-items: center; gap: 3px; padding: 4px 10px; border-radius: 999px; font-size: 13.5px; font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .vien-thuoc.len { color: var(--tang); background: var(--tang-nhat); }
+  .vien-thuoc.xuong { color: var(--giam); background: var(--giam-nhat); }
+  .chip { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 999px; white-space: nowrap; line-height: 1.6; }
   .chip.len { background: var(--tang-nhat); color: var(--tang); }
   .chip.xuong { background: var(--giam-nhat); color: var(--giam); }
   .chip.vang { background: var(--canh-nhat); color: var(--canh); }
   .chip.xam { background: var(--xam-nhat); color: var(--phu); }
-  .chip.vien { background: none; border: 1px solid currentColor; }
-  .ds-chip { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 3px; }
+  .chip.tim { background: #efeaff; color: var(--tim); }
+  .ds-chip { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 3px; }
+  .cham-ct { display: inline-flex; gap: 3px; vertical-align: middle; }
+  .cham-ct i { width: 8px; height: 14px; border-radius: 3px; background: var(--vien); }
+  .cham-ct.thap i:nth-child(1) { background: var(--tang); }
+  .cham-ct.trung_binh i:nth-child(-n+2) { background: #f5a524; }
+  .cham-ct.cao i { background: var(--giam); }
 
-  /* ---------- Sản phẩm ---------- */
-  .luoi-sp { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
-  .the-sp { all: unset; box-sizing: border-box; display: grid; grid-template-columns: 64px 1fr; gap: 12px; padding: 12px; border: 1px solid var(--vien-nhe);
-            border-radius: 12px; cursor: pointer; background: var(--mat); min-width: 0; }
-  .the-sp:hover { border-color: var(--vien); background: var(--xam-nhat); }
-  .the-sp:focus-visible { outline: 2px solid var(--chinh); }
-  .the-sp img { width: 64px; height: 64px; border-radius: 10px; object-fit: cover; background: var(--xam-nhat); }
-  .the-sp .ten-sp { font-size: 14px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .the-sp .duoi { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-top: 6px; }
-  .the-sp .so-chinh { font-size: 17px; }
+  /* ================= SẢN PHẨM ================= */
+  .tab-sp { display: inline-flex; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+  .tab-sp button { border: 1px solid var(--vien); background: var(--mat); padding: 7px 14px; border-radius: 999px; cursor: pointer; font-weight: 700; font-size: 14px; color: var(--phu); }
+  .tab-sp button[aria-pressed="true"] { color: #fff; border-color: transparent; }
+  .tab-sp button[aria-pressed="true"][data-dssp="bung_no"] { background: linear-gradient(120deg, #ff6a1f, #ff3d5c); }
+  .tab-sp button[aria-pressed="true"][data-dssp="quang_ba"] { background: linear-gradient(120deg, #ec2f7c, #a23cff); }
+  .tab-sp button[aria-pressed="true"][data-dssp="ban_nhieu"] { background: linear-gradient(120deg, #6a4cff, #3a7bff); }
+  .luoi-sp { display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 14px; }
+  .the-sp { all: unset; box-sizing: border-box; cursor: pointer; background: var(--mat); border: 1px solid var(--vien); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+  .the-sp:hover { border-color: #cfc5ff; box-shadow: var(--bong-noi); transform: translateY(-2px); }
+  .the-sp:focus-visible { outline: 3px solid var(--tim); }
+  .anh-sp { position: relative; aspect-ratio: 1 / 1; background: color-mix(in srgb, var(--m) 13%, #fff); display: grid; place-items: center; font-size: 52px; }
+  .anh-sp img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .tem { position: absolute; left: 10px; top: 10px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 800; color: #fff; box-shadow: 0 6px 14px -6px rgba(0,0,0,.4); }
+  .tem.bung_no { background: linear-gradient(120deg, #ff6a1f, #ff3d5c); }
+  .tem.quang_ba { background: linear-gradient(120deg, #ec2f7c, #a23cff); }
+  .tem.ban_nhieu { background: linear-gradient(120deg, #6a4cff, #3a7bff); }
+  .the-sp .noi-dung { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 5px; flex: 1; }
+  .the-sp .ten-sp { font-size: 13.5px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.8em; }
+  .the-sp .gia { font-weight: 800; font-size: 17px; color: var(--cam); letter-spacing: -.01em; }
+  .the-sp .duoi { margin-top: auto; padding-top: 2px; }
+  .luoi-sp > .trong-rong { grid-column: 1 / -1; }
 
-  footer { color: var(--phu); font-size: 13px; max-width: 75ch; margin: 28px 0 0; line-height: 1.6; }
+  footer { color: var(--phu); font-size: 13px; max-width: 75ch; margin: 24px 0 0; line-height: 1.65; }
 
-  /* ---------- Bảng phân tích ---------- */
+  /* ================= BẢNG PHÂN TÍCH ================= */
   .man-che { position: fixed; inset: 0; background: var(--man); opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 10; }
   .man-che.mo { opacity: 1; pointer-events: auto; }
-  .bang-pt { position: fixed; top: 0; right: 0; bottom: 0; width: min(640px, 100%); background: var(--nen); transform: translateX(100%);
-             transition: transform .25s ease; z-index: 11; overflow-y: auto; border-left: 1px solid var(--vien); }
-  .bang-pt.mo { transform: none; }
-  .pt-dau { position: sticky; top: 0; z-index: 1; background: var(--mat); border-bottom: 1px solid var(--vien); padding: 16px 18px; display: flex; gap: 14px; align-items: flex-start; }
-  .pt-dau img { width: 64px; height: 64px; border-radius: 10px; object-fit: cover; background: var(--xam-nhat); flex: none; }
-  .pt-dau h2 { font-family: "Archivo", sans-serif; font-stretch: 85%; font-weight: 700; font-size: 22px; line-height: 1.2; margin: 0 0 4px; }
-  .nut-dong { margin-left: auto; flex: none; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--vien); background: var(--mat); cursor: pointer; font-size: 17px; }
-  .pt-than { padding: 16px 18px 48px; display: grid; gap: 12px; }
-  .ket-luan { background: var(--chinh); color: #fff; border-radius: 14px; padding: 14px 16px; }
-  :root[data-theme="dark"] .ket-luan { color: #0f141b; }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .ket-luan { color: #0f141b; } }
-  .ket-luan .phu { color: inherit; opacity: .8; }
-  .ket-luan b { font-family: "Archivo", sans-serif; font-stretch: 85%; font-size: 19px; font-weight: 700; display: block; line-height: 1.3; margin-top: 2px; }
-  .chi-so { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--vien); border: 1px solid var(--vien); border-radius: 14px; overflow: hidden; }
-  .chi-so > div { background: var(--mat); padding: 11px 14px; }
-  .chi-so .gt { font-family: "Archivo", sans-serif; font-stretch: 88%; font-variant-numeric: tabular-nums; font-weight: 700; font-size: 20px; line-height: 1.3; }
-  .pt-khoi { background: var(--mat); border: 1px solid var(--vien); border-radius: 14px; padding: 14px 16px; }
-  .pt-khoi h3 { font-size: 15px; font-weight: 600; margin: 0 0 8px; }
+  .bang-pt { position: fixed; top: 0; right: 0; bottom: 0; width: min(660px, 100%); background: var(--nen); transform: translateX(100%);
+             transition: transform .25s ease; z-index: 11; overflow-y: auto; }
+  .bang-pt.mo { transform: none; box-shadow: -20px 0 60px rgba(24, 20, 48, .25); }
+  .pt-dau { position: sticky; top: 0; z-index: 1; padding: 18px 20px; display: flex; gap: 14px; align-items: center; color: #fff;
+            background: linear-gradient(115deg, #ff6a1f, #f23d79 55%, #6a4cff); }
+  .pt-dau .o-bt { background: rgba(255,255,255,.96); box-shadow: none; width: 52px; height: 52px; font-size: 26px; border-radius: 16px; }
+  .pt-dau img { width: 60px; height: 60px; border-radius: 14px; object-fit: cover; background: #fff; flex: none; }
+  .pt-dau h2 { font-weight: 800; font-size: 22px; line-height: 1.2; margin: 0 0 4px; letter-spacing: -.02em; }
+  .pt-dau .chip { background: rgba(255,255,255,.95); }
+  .nut-dong { margin-left: auto; flex: none; width: 38px; height: 38px; border-radius: 12px; border: 0; background: rgba(255,255,255,.24); color: #fff; cursor: pointer; font-size: 17px; }
+  .pt-than { padding: 16px 20px 48px; display: grid; gap: 12px; }
+  .ket-luan { background: var(--mat); border-radius: 18px; padding: 14px 16px 14px 20px; border: 1px solid var(--vien); box-shadow: var(--bong); position: relative; overflow: hidden; }
+  .ket-luan::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: linear-gradient(180deg, var(--cam), var(--hong), var(--tim)); }
+  .ket-luan b { display: block; font-size: 17px; font-weight: 700; line-height: 1.45; margin-top: 2px; }
+  .chi-so { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .chi-so > div { background: var(--mat); border: 1px solid var(--vien); border-radius: 16px; padding: 11px 14px; }
+  .chi-so .gt { font-weight: 800; font-size: 21px; line-height: 1.3; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .pt-khoi { background: var(--mat); border: 1px solid var(--vien); border-radius: 18px; padding: 14px 16px; }
+  .pt-khoi h3 { font-size: 15px; font-weight: 700; margin: 0 0 8px; }
   .pt-khoi ul { margin: 0; padding-left: 18px; }
   .pt-khoi li { margin-bottom: 7px; font-size: 14px; }
+  .pt-khoi li::marker { color: var(--hong); }
   .pt-khoi li:last-child { margin-bottom: 0; }
   .bieu-do svg { width: 100%; height: auto; display: block; }
+  .chu-thich { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--phu); margin-top: 8px; }
+  .chu-thich i { display: inline-block; width: 10px; height: 10px; margin-right: 5px; border-radius: 3px; vertical-align: -1px; }
   .bang-loai { width: 100%; border-collapse: collapse; font-size: 14px; }
-  .bang-loai th { text-align: left; color: var(--phu); font-weight: 500; font-size: 12.5px; padding: 0 8px 8px 0; border-bottom: 1px solid var(--vien); }
-  .bang-loai td { padding: 9px 8px 9px 0; border-bottom: 1px solid var(--vien-nhe); vertical-align: top; }
+  .bang-loai th { text-align: left; color: var(--phu); font-weight: 600; font-size: 12.5px; padding: 0 8px 8px 0; border-bottom: 1px solid var(--vien); }
+  .bang-loai td { padding: 9px 8px 9px 0; border-bottom: 1px dashed var(--vien); vertical-align: top; }
   .bang-loai tr:last-child td { border-bottom: 0; }
-  .nut-chinh { display: block; text-align: center; background: var(--chinh); color: #fff; text-decoration: none; font-weight: 600; padding: 12px; border-radius: 12px; }
-  :root[data-theme="dark"] .nut-chinh { color: #0f141b; }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .nut-chinh { color: #0f141b; } }
-  .nut-phu { justify-self: start; border: 1px solid var(--vien); background: var(--mat); padding: 9px 14px; border-radius: 10px; cursor: pointer; font-size: 14px; }
-  .shop-dau { display: flex; justify-content: space-between; font-size: 14px; padding: 5px 0; }
-  .shop-dau + .shop-dau { border-top: 1px solid var(--vien-nhe); }
+  .nut-chinh { display: block; text-align: center; background: linear-gradient(120deg, #ff6a1f, #ff3d5c); color: #fff; text-decoration: none; font-weight: 800; padding: 13px; border-radius: 14px; box-shadow: 0 12px 24px -12px rgba(255, 61, 92, .7); }
+  .nut-phu { justify-self: start; border: 1px solid var(--vien); background: var(--mat); padding: 9px 14px; border-radius: 999px; cursor: pointer; font-size: 14px; font-weight: 600; }
+  .shop-dau { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 14px; padding: 6px 0; }
+  .shop-dau + .shop-dau { border-top: 1px dashed var(--vien); }
+  /* Gian hàng uy tín */
+  .khoi-gh { background: linear-gradient(135deg, #fff4ec, #fff0f6 60%, #f3efff); border: 1px solid #ffd9c7; border-radius: 18px; padding: 14px 14px 12px; }
+  .khoi-gh h3 { font-size: 15.5px; font-weight: 800; margin: 0 2px 2px; }
+  .khoi-gh > .phu { margin: 0 2px 10px; }
+  .gh { display: grid; grid-template-columns: 34px 52px minmax(0, 1fr) auto; gap: 12px; align-items: center; background: #fff; border-radius: 14px; padding: 10px 12px 10px 10px; box-shadow: 0 1px 2px rgba(29,31,51,.05); }
+  .gh + .gh { margin-top: 8px; }
+  .gh .huy { width: 32px; height: 32px; font-size: 14px; }
+  .gh .anh-gh { width: 52px; height: 52px; border-radius: 12px; overflow: hidden; display: grid; place-items: center; font-size: 24px; background: color-mix(in srgb, var(--m) 14%, #fff); position: relative; }
+  .gh .anh-gh img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .gh .ten-gh { font-weight: 800; font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .gh .chi-tiet-gh { font-size: 12.5px; color: var(--phu); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .the-shop { display: inline-block; font-size: 11px; font-weight: 800; padding: 1px 7px; border-radius: 5px; margin-right: 4px; vertical-align: 1px; color: #fff; }
+  .the-shop.mall { background: #d0011b; }
+  .the-shop.yeu_thich_plus { background: #ee4d2d; }
+  .the-shop.yeu_thich { background: #ff7337; }
+  .vao-gh { display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px; border-radius: 999px; text-decoration: none; font-weight: 800; font-size: 14px; color: #fff; white-space: nowrap;
+            background: linear-gradient(120deg, #ff6a1f, #ff3d5c); box-shadow: 0 8px 18px -10px rgba(255, 61, 92, .8); }
+  .vao-gh:hover { filter: brightness(1.05); }
+  .gh.khong-link .vao-gh { background: var(--xam-nhat); color: var(--phu); box-shadow: none; pointer-events: none; }
+  .nut-gh-nhanh { display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 700; color: var(--cam); background: #fff1e8; text-decoration: none; white-space: nowrap; }
+  .nut-gh-nhanh:hover { background: #ffe3d2; }
+  @media (max-width: 640px) {
+    .gh { grid-template-columns: 30px 44px minmax(0, 1fr); }
+    .gh .anh-gh { width: 44px; height: 44px; }
+    .gh .vao-gh { grid-column: 1 / -1; justify-content: center; }
+  }
+  .pt-than .luoi-sp { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
 
   @media (max-width: 960px) {
-    .ban-tin, .luoi { grid-template-columns: 1fr; }
-    .ban-tin { gap: 18px; }
+    .bang-ron .trong { grid-template-columns: 1fr; gap: 22px; padding-bottom: 56px; }
+    .tin-hieu { grid-template-columns: 1fr; }
   }
   @media (max-width: 640px) {
-    .thanh-tren .trong { padding: 10px 16px; gap: 10px; }
+    .thanh-tren .trong { padding: 10px 16px; gap: 8px; }
     .hieu { width: 100%; }
-    .khung { padding: 16px 16px 48px; }
-    .khoi-dau { padding: 14px 14px 0; }
-    .khoi-than { padding: 10px 14px 14px; }
+    .chon button { padding: 6px 11px; }
+    .bang-ron .trong { padding: 22px 16px 52px; }
+    .khung { padding: 0 12px 48px; }
+    .khoi-dau { padding: 16px 14px 4px; }
+    .khoi-than { padding: 10px 10px 14px; }
     .an-dt { display: none; }
-    .bang-xh td, .bang-xh th { padding: 9px 6px; }
+    .bang-xh td { padding: 9px 7px; }
+    .bang-xh th { padding: 4px 7px; }
+    .o-bt { width: 36px; height: 36px; font-size: 18px; border-radius: 11px; }
+    .o-ten { gap: 8px; }
+    .ten-xh { font-size: 14.5px; }
+    .thanh-tt { width: 70px; }
+    .dong-buc { grid-template-columns: 38px 38px minmax(0, 1fr) auto; gap: 9px; }
+    .tang-buc { font-size: 19px; }
+    .luoi-sp { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .tab-sp { margin-left: 0; }
     .chi-so .gt { font-size: 18px; }
-    .chon button { padding: 6px 9px; }
   }
-  @media (prefers-reduced-motion: reduce) { .bang-pt, .man-che { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .bang-pt, .man-che { transition: none; } .the-sp:hover, .the-len:hover, .dong-buc:hover { transform: none; } }
 </style>
 </head>
 <body>
 <header class="thanh-tren">
   <div class="trong">
     <div class="hieu">
-      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
-        <circle cx="15" cy="15" r="13" fill="none" stroke="var(--chinh)" stroke-width="2"/>
-        <circle cx="15" cy="15" r="7.5" fill="none" stroke="var(--chinh)" stroke-width="1.5" opacity=".5"/>
-        <path d="M15 15 L25 7" stroke="var(--chinh)" stroke-width="2" stroke-linecap="round"/>
-        <circle cx="21" cy="10" r="2.6" fill="var(--tang)"/>
-      </svg>
+      <div class="logo" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/><path d="M9.5 15l2-2 1.5 1.5 2.5-3"/>
+        </svg>
+      </div>
       <div><b>Radar Hàng Bán Chạy</b><span class="phu" id="capNhat">Đang tải số liệu…</span></div>
     </div>
     <div class="chon" id="chonKy" role="group" aria-label="Kỳ thống kê">
@@ -214,43 +299,29 @@
   </div>
 </header>
 
+<section class="bang-ron" aria-label="Bản tin hôm nay">
+  <div class="trong">
+    <div>
+      <span class="nhan-ngay"><i></i><span id="ngayBanTin">Bản tin hôm nay</span></span>
+      <h1 id="tieuDe">Đang tải bản tin…</h1>
+      <p class="dien-giai" id="dienGiai"></p>
+      <div class="dai-len" id="daiLen"></div>
+    </div>
+    <div class="buc" id="bucTop"></div>
+  </div>
+</section>
+
 <main class="khung">
   <div id="thongBao"></div>
 
-  <section class="ban-tin" aria-label="Bản tin hôm nay">
-    <div>
-      <p class="ngay" id="ngayBanTin"></p>
-      <h1 id="tieuDe">Đang tải bản tin…</h1>
-      <p class="dien-giai" id="dienGiai"></p>
-    </div>
-    <div class="diem-nhan" id="diemNhan"></div>
-  </section>
+  <div class="tin-hieu" id="tinHieu"></div>
 
-  <div class="luoi">
-    <section class="khoi ban-do">
-      <div class="khoi-dau">
-        <h2>Bản đồ cơ hội</h2>
-        <span class="phu">Chấm càng cao là càng đang lên, càng sang trái là càng ít đối thủ. Bấm vào chấm để xem phân tích.</span>
-        <div class="chon" id="chonBanDo" role="group" aria-label="Hiển thị theo">
-          <button data-bd="loai" aria-pressed="true">Loại hàng</button>
-          <button data-bd="nhom" aria-pressed="false">Nhóm hàng</button>
-        </div>
-      </div>
-      <div class="khoi-than" id="banDo"></div>
-    </section>
-
-    <section class="khoi tin-hieu">
-      <div class="khoi-dau"><h2>Tín hiệu thứ hạng</h2><span class="phu" id="moTaTinHieu"></span></div>
-      <div class="khoi-than" id="tinHieu"></div>
-    </section>
-  </div>
-
-  <section class="khoi" style="margin-bottom:18px">
-    <div class="khoi-dau"><h2>Xếp hạng nhóm hàng</h2><span class="phu" id="moTaXepHang"></span></div>
-    <div class="khoi-than" style="padding-top:4px; overflow-x:auto">
+  <section class="khoi">
+    <div class="khoi-dau"><h2>Bảng xếp hạng ngành hàng</h2><span class="phu" id="moTaXepHang"></span></div>
+    <div class="khoi-than" style="padding-top:2px; overflow-x:auto">
       <table class="bang-xh">
         <thead><tr>
-          <th>Hạng</th><th>Nhóm hàng</th><th class="an-dt">30 ngày</th>
+          <th>Hạng</th><th>Ngành hàng</th><th class="an-dt">Xu hướng 30 ngày</th>
           <th class="phai" id="cotChinh">Số bán</th><th class="phai">So kỳ trước</th><th class="an-dt">Cạnh tranh</th>
         </tr></thead>
         <tbody id="bangNhom"></tbody>
@@ -260,18 +331,18 @@
 
   <section class="khoi">
     <div class="khoi-dau">
-      <h2>Sản phẩm</h2>
-      <span class="phu" id="moTaSp"></span>
-      <div class="chon" id="chonSp" role="group" aria-label="Danh sách sản phẩm">
-        <button data-dssp="bung_no" aria-pressed="true">Bùng nổ</button>
-        <button data-dssp="quang_ba" aria-pressed="false">Nên quảng bá</button>
-        <button data-dssp="ban_nhieu" aria-pressed="false">Bán nhiều nhất</button>
+      <h2>Sản phẩm nổi bật</h2>
+      <div class="tab-sp" id="chonSp" role="group" aria-label="Danh sách sản phẩm">
+        <button data-dssp="bung_no" aria-pressed="true">🔥 Đang bùng nổ</button>
+        <button data-dssp="quang_ba" aria-pressed="false">💰 Nên quảng bá</button>
+        <button data-dssp="ban_nhieu" aria-pressed="false">🏆 Bán nhiều nhất</button>
       </div>
     </div>
-    <div class="khoi-than"><div class="luoi-sp" id="dsSp"></div></div>
+    <div class="khoi-than"><p class="phu" id="moTaSp" style="margin:0 0 12px"></p><div class="luoi-sp" id="dsSp"></div></div>
   </section>
 
   <footer>
+    Trang có gắn liên kết tiếp thị liên kết Shopee: khi bạn mua qua liên kết, trang được Shopee trả hoa hồng, giá bạn mua không đổi.<br>
     Số bán tính từ chênh lệch "đã bán" mà Shopee công bố giữa các ngày; doanh thu là ước tính theo giá thấp nhất của sản phẩm.
     Mũi tên thứ hạng so với lần cập nhật trước của cùng kỳ. Các ngày siêu sale (ngày đôi, Black Friday) không được dùng để tính xu hướng, tín hiệu và sản phẩm bùng nổ.
   </footer>
@@ -281,8 +352,21 @@
 <aside class="bang-pt" id="bangPt" role="dialog" aria-modal="true" aria-label="Phân tích" tabindex="-1"></aside>
 
 <script>
-let duLieu = null, kyDangChon = "ngay", xepTheo = "so_ban", kieuBanDo = "loai", dsSp = "bung_no";
+let duLieu = null, kyDangChon = "ngay", xepTheo = "so_ban", dsSp = "bung_no";
 const KHO_SP = {};
+
+// ---------- Biểu tượng và màu riêng của từng ngành hàng (thêm ngành mới thì thêm 1 dòng ở đây) ----------
+const NGANH = {
+  "Thời trang nữ": ["👗", "#ec2f7c"], "Thời trang nam": ["👕", "#3a7bff"], "Giày dép": ["👟", "#ff6a1f"],
+  "Túi ví": ["👜", "#b5651d"], "Mỹ phẩm – làm đẹp": ["💄", "#e8418f"], "Chăm sóc cá nhân": ["🧴", "#18a8c9"],
+  "Mẹ và bé": ["🍼", "#ff7aa8"], "Nhà bếp – gia dụng": ["🍳", "#f08c00"], "Nhà cửa – đời sống": ["🛋️", "#8a6cff"],
+  "Điện thoại – phụ kiện": ["📱", "#4361ee"], "Thiết bị điện tử": ["🎧", "#7048e8"], "Máy tính – laptop": ["💻", "#5c677d"],
+  "Thực phẩm – đồ uống": ["🍜", "#e8590c"], "Sức khỏe": ["💊", "#12b886"], "Thể thao – dã ngoại": ["🏕️", "#2f9e44"],
+  "Đồ chơi": ["🧸", "#f59f00"], "Ô tô – xe máy": ["🏍️", "#d6336c"], "Thú cưng": ["🐾", "#c2410c"],
+  "Văn phòng phẩm": ["✏️", "#1c7ed6"], "Đồng hồ – trang sức": ["⌚", "#b8860b"],
+};
+const nganh = ten => NGANH[ten] || ["🛍️", "#6a4cff"];
+const oBt = (ten, nho) => { const [bt, m] = nganh(ten); return `<span class="o-bt${nho ? " nho" : ""}" style="--m:${m}" aria-hidden="true">${bt}</span>`; };
 
 // ---------- Tiện ích ----------
 const soVN = n => Math.round(n).toLocaleString("vi-VN");
@@ -299,190 +383,146 @@ const phanTram = x => x === null || x === undefined ? "–" : (x > 0 ? "+" : "")
 const lopBienDong = x => x === null || x === undefined ? "" : (x >= 0 ? "len" : "xuong");
 const chip = gd => gd ? `<span class="chip ${gd.mau}">${anToan(gd.ten)}</span>` : "";
 const TEN_CT = {thap: "Thấp", trung_binh: "Trung bình", cao: "Cao"};
-const MAU_CT = {thap: "len", trung_binh: "vang", cao: "xuong"};
-const chipCt = ct => ct && ct.muc ? `<span class="chip vien ${MAU_CT[ct.muc]}">${TEN_CT[ct.muc]}</span>` : `<span class="phu">–</span>`;
+const chipCt = ct => ct && ct.muc ? `<span class="cham-ct ${ct.muc}" title="3 shop đầu chiếm ${soLe(ct.top3_phan_tram)}% số bán"><i></i><i></i><i></i></span> <span style="font-size:13px;font-weight:600">${TEN_CT[ct.muc]}</span>` : `<span class="phu">–</span>`;
 const pt = () => duLieu.phan_tich || {nhom: {}, san_pham: {}};
+const huy = i => i < 3 ? `<span class="huy h${i + 1}">${i + 1}</span>` : `<span class="huy thuong">${i + 1}</span>`;
+const vietHoa = s => s ? s[0].toUpperCase() + s.slice(1) : s;
 function ghiNho(sp) { if (sp && sp.ma) KHO_SP[sp.ma] = Object.assign(KHO_SP[sp.ma] || {}, sp); return sp; }
-
-// ---------- Bản tin hôm nay ----------
 function tatCaLoai() {
   const ds = [];
   Object.entries(pt().nhom).forEach(([nhom, v]) => (v.theo_loai || []).forEach(l => ds.push({...l, nhom})));
   return ds;
 }
+
+// ---------- Băng rôn: bản tin + bục top 3 ----------
 function veBanTin() {
   document.getElementById("ngayBanTin").textContent = `Bản tin ngày ${ngayVN(duLieu.ngay)}`;
   const loai = tatCaLoai().filter(l => l.giai_doan.tang_tuan !== null);
   const coHoi = loai.filter(l => ["moi_noi", "dang_tang"].includes(l.giai_doan.ma) && l.canh_tranh.muc !== "cao")
-                    .sort((a, b) => b.giai_doan.tang_tuan - a.giai_doan.tang_tuan)[0];
-  const tranh = loai.filter(l => ["thoai_trao", "dang_giam"].includes(l.giai_doan.ma))
-                    .sort((a, b) => a.giai_doan.tang_tuan - b.giai_doan.tang_tuan)[0];
+                    .sort((a, b) => b.giai_doan.tang_tuan - a.giai_doan.tang_tuan);
   const tieuDe = document.getElementById("tieuDe"), dienGiai = document.getElementById("dienGiai");
-  if (coHoi) {
-    tieuDe.textContent = `${coHoi.ten[0].toUpperCase() + coHoi.ten.slice(1)} đang lên ${phanTram(coHoi.giai_doan.tang_tuan)} và còn ít đối thủ.`;
-    dienGiai.textContent = `Thuộc nhóm ${coHoi.nhom}. ${coHoi.ket_luan} Giá bán chạy nhất khoảng ${coHoi.khoang_gia ? tienGon(coHoi.khoang_gia.pho_bien) : "chưa rõ"}.`;
+  if (coHoi[0]) {
+    const c = coHoi[0];
+    tieuDe.textContent = `${vietHoa(c.ten)} đang lên ${phanTram(c.giai_doan.tang_tuan)} và còn ít đối thủ.`;
+    dienGiai.textContent = `Thuộc ngành ${c.nhom}. ${c.ket_luan} Giá bán chạy nhất khoảng ${c.khoang_gia ? tienGon(c.khoang_gia.pho_bien) : "chưa rõ"}.`;
   } else if (loai.length) {
     tieuDe.textContent = "Hôm nay chưa có loại hàng nào vừa đang lên vừa ít đối thủ.";
-    dienGiai.textContent = "Thị trường đang đi ngang. Xem bản đồ cơ hội để tìm loại hàng gần với góc trên bên trái.";
+    dienGiai.textContent = "Thị trường đang đi ngang. Xem bảng xếp hạng bên dưới để chọn ngành hàng ổn định.";
   } else {
-    tieuDe.textContent = "Đang gom số liệu để tìm cơ hội.";
-    dienGiai.textContent = "Cần ít nhất 8 ngày số liệu để xác định loại hàng nào đang lên, loại nào đang giảm. Trong lúc chờ, xem xếp hạng và sản phẩm bán chạy bên dưới.";
+    tieuDe.textContent = "Đang gom số liệu để tìm hàng đang lên.";
+    dienGiai.textContent = "Cần ít nhất 8 ngày số liệu để biết loại hàng nào đang lên, loại nào đang giảm. Trong lúc chờ, xem xếp hạng và sản phẩm bán chạy bên dưới.";
   }
-  const nhomNong = Object.entries(pt().nhom).filter(([, v]) => v.giai_doan.tang_tuan !== null)
-                         .sort((a, b) => b[1].giai_doan.tang_tuan - a[1].giai_doan.tang_tuan)[0];
-  const bn = (duLieu.bung_no || {}).san_pham || [];
-  const diem = [];
-  if (nhomNong) diem.push(`<button data-nhom="${anToan(nhomNong[0])}"><span class="nhan-dn">Nhóm tăng nhanh nhất</span>
-      <span class="ten-dn">${anToan(nhomNong[0])}</span><span class="so-dn" style="color:var(--tang)">${phanTram(nhomNong[1].giai_doan.tang_tuan)}</span></button>`);
-  if (bn[0]) { ghiNho(bn[0]); diem.push(`<button data-sp="${anToan(bn[0].ma)}"><span class="nhan-dn">Sản phẩm bùng nổ mạnh nhất</span>
-      <span class="ten-dn">${anToan(bn[0].ten)}</span><span class="so-dn" style="color:var(--chinh)">gấp ${soLe(bn[0].gap_lan)} lần</span></button>`); }
-  if (tranh) diem.push(`<button data-nhom="${anToan(tranh.nhom)}"><span class="nhan-dn">Nên tránh nhập</span>
-      <span class="ten-dn">${anToan(tranh.ten)}</span><span class="so-dn" style="color:var(--giam)">${phanTram(tranh.giai_doan.tang_tuan)}</span></button>`);
-  if (!diem.length) {
-    const top = duLieu.ky[kyDangChon].nhom[0];
-    if (top) diem.push(`<button data-nhom="${anToan(top.ten)}"><span class="nhan-dn">Nhóm bán nhiều nhất</span><span class="ten-dn">${anToan(top.ten)}</span><span class="so-dn">${soVN(top.so_ban)} sp</span></button>`);
+  document.getElementById("daiLen").innerHTML = coHoi.slice(1, 7).map(l => {
+    const [bt, m] = nganh(l.nhom);
+    return `<button class="the-len" data-nhom="${anToan(l.nhom)}"><span class="bt" style="background:color-mix(in srgb, ${m} 16%, #fff)">${bt}</span>${anToan(vietHoa(l.ten))} <b>${phanTram(l.giai_doan.tang_tuan)}</b></button>`;
+  }).join("");
+
+  const top3 = Object.entries(pt().nhom).filter(([, v]) => v.giai_doan.tang_tuan !== null && v.giai_doan.tang_tuan > 0)
+                     .sort((a, b) => b[1].giai_doan.tang_tuan - a[1].giai_doan.tang_tuan).slice(0, 3);
+  const buc = document.getElementById("bucTop");
+  if (top3.length) {
+    buc.innerHTML = `<h2>🏆 Top ngành hàng tăng mạnh nhất <span>so với tuần trước</span></h2>` + top3.map(([ten, v], i) =>
+      `<button class="dong-buc h${i + 1}" data-nhom="${anToan(ten)}">${huy(i)}${oBt(ten)}
+        <div style="min-width:0"><div class="ten-buc">${anToan(ten)}</div><div class="phu">${anToan(v.giai_doan.ten)}${v.canh_tranh.muc ? ", cạnh tranh " + TEN_CT[v.canh_tranh.muc].toLowerCase() : ""}</div></div>
+        <div class="tang-buc">${phanTram(v.giai_doan.tang_tuan)}<small>${soVN(v.ban_7_ngay)} sp / 7 ngày</small></div></button>`).join("");
+  } else {
+    const ky = duLieu.ky[kyDangChon];
+    const ds = [...ky.nhom].sort((a, b) => b.so_ban - a.so_ban).slice(0, 3);
+    buc.innerHTML = ds.length ? `<h2>🏆 Top ngành hàng bán nhiều nhất <span>${anToan(ky.ten.toLowerCase())}</span></h2>` + ds.map((n, i) =>
+      `<button class="dong-buc h${i + 1}" data-nhom="${anToan(n.ten)}">${huy(i)}${oBt(n.ten)}
+        <div style="min-width:0"><div class="ten-buc">${anToan(n.ten)}</div><div class="phu">${soLe(n.ty_trong)}% tổng số bán</div></div>
+        <div class="tang-buc" style="color:var(--muc)">${soVN(n.so_ban)}<small>sản phẩm</small></div></button>`).join("")
+      : `<h2>🏆 Top ngành hàng</h2><div class="trong-rong">Sẽ có sau lần cập nhật đầu tiên.</div>`;
   }
-  document.getElementById("diemNhan").innerHTML = diem.join("");
-  document.getElementById("diemNhan").style.display = diem.length ? "" : "none";
 }
 
-// ---------- Bản đồ cơ hội ----------
-function veBanDo() {
-  const hop = document.getElementById("banDo");
-  const diem = (kieuBanDo === "loai"
-      ? tatCaLoai().map(l => ({ten: l.ten, nhom: l.nhom, gd: l.giai_doan, ct: l.canh_tranh, ban: l.ban_7_ngay}))
-      : Object.entries(pt().nhom).map(([ten, v]) => ({ten, nhom: ten, gd: v.giai_doan, ct: v.canh_tranh, ban: v.ban_7_ngay})))
-    .filter(d => d.gd.tang_tuan !== null && d.ct.top3_phan_tram !== null && d.ban > 0);
-  if (!diem.length) {
-    hop.innerHTML = `<div class="trong-rong">Bản đồ cần ít nhất 8 ngày số liệu để tính mức tăng so với tuần trước. Hiện chưa đủ, các chấm sẽ tự hiện khi đủ ngày.</div>`;
-    return;
-  }
-  const R = Math.max(320, Math.min(760, hop.clientWidth || 700)), C = Math.round(R * 0.58);
-  const banMax = Math.max(...diem.map(d => d.ban));
-  const rMax = R < 500 ? 14 : 20;
-  const r = b => 4 + Math.sqrt(b / banMax) * (rMax - 4);
-  const le = {t: 30, p: rMax + 6, tr: rMax + 30, d: 34};
-  // Trục tự co theo dữ liệu để các chấm không dồn cục
-  const xs = diem.map(d => d.ct.top3_phan_tram), ys = diem.map(d => d.gd.tang_tuan);
-  let xLo = Math.max(0, Math.min(...xs) - 5), xHi = Math.min(100, Math.max(...xs) + 5);
-  if (xHi - xLo < 30) { const g = (xLo + xHi) / 2; xLo = Math.max(0, g - 15); xHi = Math.min(100, xLo + 30); }
-  const yLo = Math.max(-80, Math.min(-20, Math.min(...ys) - 8)), yHi = Math.min(200, Math.max(30, Math.max(...ys) + 8));
-  const sx = x => le.t + ((x - xLo) / (xHi - xLo)) * (R - le.t - le.p);
-  const sy = y => le.tr + (1 - (Math.max(yLo, Math.min(yHi, y)) - yLo) / (yHi - yLo)) * (C - le.tr - le.d);
-  const y0 = sy(0), xNguong = Math.min(35, xHi), mau = {len: "var(--tang)", vang: "var(--canh)", xuong: "var(--giam)", xam: "var(--phu)"};
-  let svg = "";
-  // Dải chữ riêng phía trên vùng vẽ, không bị chấm đè
-  if (xNguong > xLo) svg += `<rect x="${le.t}" y="4" width="${(sx(xNguong) - le.t).toFixed(1)}" height="${(y0 - 4).toFixed(1)}" fill="var(--tang-nhat)" rx="8"/>
-    <text x="${le.t + 10}" y="20" font-size="12.5" font-weight="600" fill="var(--tang)">${sx(xNguong) - le.t > 210 ? "Cơ hội tốt: đang lên, ít đối thủ" : "Cơ hội tốt"}</text>`;
-  if (xHi > 60) { const xa = sx(Math.max(60, xLo)); svg += `<rect x="${xa.toFixed(1)}" y="${y0.toFixed(1)}" width="${(R - le.p + rMax - xa).toFixed(1)}" height="${(C - le.d - y0).toFixed(1)}" fill="var(--giam-nhat)" rx="8" opacity=".7"/>`; }
-  svg += `<line x1="${le.t}" x2="${R - 4}" y1="${y0.toFixed(1)}" y2="${y0.toFixed(1)}" stroke="var(--vien)" stroke-dasharray="4 4"/>
-    <text x="${le.t + 2}" y="${(y0 - 5).toFixed(1)}" font-size="11" fill="var(--phu)">0%</text>
-    <text x="${le.t}" y="${C - 10}" font-size="11.5" fill="var(--phu)">${soLe(Math.round(xLo))}%, ít đối thủ hơn</text>
-    <text x="${R - 4}" y="${C - 10}" font-size="11.5" fill="var(--phu)" text-anchor="end">${soLe(Math.round(xHi))}%, đông đối thủ hơn</text>
-    <text x="14" y="${(C - le.d + le.tr) / 2}" font-size="11.5" fill="var(--phu)" transform="rotate(-90 14 ${(C - le.d + le.tr) / 2})" text-anchor="middle">Tăng so với tuần trước</text>
-    <text x="${le.t}" y="${le.tr - 4}" font-size="11" fill="var(--phu)" opacity="0">.</text>`;
-  [0, 25, 50, 75, 100].filter(v => v > xLo + 3 && v < xHi - 3).forEach(v =>
-    svg += `<line x1="${sx(v).toFixed(1)}" x2="${sx(v).toFixed(1)}" y1="${C - le.d}" y2="${C - le.d + 4}" stroke="var(--phu)"/>
-            <text x="${sx(v).toFixed(1)}" y="${C - le.d + 15}" font-size="10.5" fill="var(--phu)" text-anchor="middle">${v}%</text>`);
-  // Chọn chấm được ghi tên: to nhất và nằm trong vùng cơ hội; đặt nhãn không chồng nhau
-  const uuTien = [...diem].sort((a, b) => b.ban - a.ban).slice(0, R < 500 ? 4 : 7)
-    .concat(diem.filter(d => d.ct.top3_phan_tram < 35 && d.gd.tang_tuan > 10).sort((a, b) => b.gd.tang_tuan - a.gd.tang_tuan).slice(0, 5));
-  const daDat = [{x: le.t, y: 4, w: 230, h: 22}], nhan = new Map();
-  const chong = (a, b) => a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h;
-  diem.forEach(d => daDat.push({x: sx(d.ct.top3_phan_tram) - 2, y: sy(d.gd.tang_tuan) - 2, w: 4, h: 4}));
-  uuTien.forEach(d => {
-    if (nhan.has(d)) return;
-    const cx = sx(d.ct.top3_phan_tram), cy = sy(d.gd.tang_tuan), rr = r(d.ban), w = d.ten.length * 6.6 + 4;
-    for (const thu of [{x: cx + rr + 4, a: "start"}, {x: cx - rr - 4 - w, a: "end"}, {x: cx - w / 2, a: "middle", dy: -rr - 6}]) {
-      const hop2 = {x: thu.x, y: cy - 9 + (thu.dy || 0), w, h: 13};
-      if (hop2.x < 2 || hop2.x + w > R - 2 || hop2.y < 2) continue;
-      if (daDat.some(b => chong(hop2, b))) continue;
-      daDat.push(hop2);
-      nhan.set(d, {x: thu.a === "start" ? thu.x : thu.a === "end" ? thu.x + w : cx, y: cy + 4 + (thu.dy || 0), a: thu.a});
-      break;
-    }
-  });
-  [...diem].sort((a, b) => b.ban - a.ban).forEach(d => {
-    const cx = sx(d.ct.top3_phan_tram), cy = sy(d.gd.tang_tuan), rr = r(d.ban), m = mau[d.gd.mau] || "var(--phu)", n = nhan.get(d);
-    svg += `<g class="cham" tabindex="0" role="button" data-nhom="${anToan(d.nhom)}" aria-label="${anToan(d.ten)}: ${anToan(d.gd.ten)}, ${phanTram(d.gd.tang_tuan)}">
-      <circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${rr.toFixed(1)}" fill="${m}" fill-opacity=".2" stroke="${m}" stroke-width="1.5"/>
-      <title>${anToan(d.ten)}${kieuBanDo === "loai" ? " (" + anToan(d.nhom) + ")" : ""}: ${anToan(d.gd.ten)}, ${phanTram(d.gd.tang_tuan)} so với tuần trước, 3 shop đầu chiếm ${soLe(d.ct.top3_phan_tram)}%</title>
-      ${n ? `<text x="${n.x.toFixed(1)}" y="${n.y.toFixed(1)}" font-size="12" font-weight="600" fill="var(--muc)" text-anchor="${n.a}" paint-order="stroke" stroke="var(--mat)" stroke-width="3">${anToan(d.ten)}</text>` : ""}
-    </g>`;
-  });
-  hop.innerHTML = `<svg viewBox="0 0 ${R} ${C}" role="img" aria-label="Bản đồ cơ hội">${svg}</svg>
-    <div class="chu-thich"><span><i style="background:var(--tang)"></i>Mới nổi, đang tăng</span><span><i style="background:var(--canh)"></i>Đang chững, đang giảm</span>
-    <span><i style="background:var(--giam)"></i>Thoái trào</span><span><i style="background:var(--phu)"></i>Ổn định</span><span>Chấm càng to là bán càng nhiều trong 7 ngày</span></div>`;
-}
-
-// ---------- Tín hiệu ----------
+// ---------- Ba ô tín hiệu ----------
 function veTinHieu(ky) {
-  const hop = document.getElementById("tinHieu");
-  document.getElementById("moTaTinHieu").textContent = duLieu.ngay_lan_truoc ? `so với lần cập nhật ${ngayVN(duLieu.ngay_lan_truoc)}` : "";
-  if (!ky.co_so_sanh_hang) { hop.innerHTML = `<div class="trong-rong">Cần thêm 1 lần cập nhật nữa để so sánh thứ hạng.</div>` + lichSale(); return; }
-  if (ky.ly_do_bo_tin_hieu) { hop.innerHTML = `<div class="trong-rong">${anToan(ky.ly_do_bo_tin_hieu)}</div>` + lichSale(); return; }
-  const len = ky.nhom.filter(n => n["tin_hieu_" + xepTheo] === "dang_vuon_len").sort((a, b) => b["thay_doi_hang_" + xepTheo] - a["thay_doi_hang_" + xepTheo]);
-  const giam = ky.nhom.filter(n => n["tin_hieu_" + xepTheo] === "tot_dau_dang_giam").sort((a, b) => a["hang_" + xepTheo] - b["hang_" + xepTheo]);
-  const dong = n => `<button class="dong-th" data-nhom="${anToan(n.ten)}"><span class="ten-th">${anToan(n.ten)}</span>
-      <span class="so">hạng ${n["hang_truoc_" + xepTheo]} → ${n["hang_" + xepTheo]}${n.thay_doi_phan_tram !== null ? `, ${phanTram(n.thay_doi_phan_tram)}` : ""}</span></button>`;
-  hop.innerHTML = `<div class="nhom-th"><h3><span class="chip len">▲</span>Từ tốp dưới đang vươn lên</h3>${len.map(dong).join("") || '<div class="trong-rong" style="padding:6px 0">Chưa có nhóm nào.</div>'}</div>
-    <div class="nhom-th"><h3><span class="chip vang">▼</span>Tốp đầu đang giảm</h3>${giam.map(dong).join("") || '<div class="trong-rong" style="padding:6px 0">Chưa có nhóm nào.</div>'}</div>` + lichSale();
-}
-function lichSale() {
-  const ds = (pt().sale_sap_toi || []);
-  if (!ds.length) return "";
-  return `<div class="nhom-th"><h3><span class="chip xam">◷</span>Lịch sale sắp tới</h3>${ds.map(s => `<div class="dong-th" style="cursor:default"><span>${anToan(s.ten)}, ${ngayNgan(s.ngay)}</span><span class="so">còn ${s.con_ngay} ngày</span></div>`).join("")}</div>`;
+  const so = duLieu.ngay_lan_truoc ? `so với ${ngayNgan(duLieu.ngay_lan_truoc)}` : "";
+  const dong = n => `<button class="dong-th" data-nhom="${anToan(n.ten)}">${oBt(n.ten, true)}<span class="ten-th">${anToan(n.ten)}</span>
+      <span class="so">hạng ${n["hang_truoc_" + xepTheo]} → <b style="color:var(--muc)">${n["hang_" + xepTheo]}</b></span></button>`;
+  let len, giam;
+  if (!ky.co_so_sanh_hang) { len = giam = `<div class="trong-rong">Cần thêm 1 lần cập nhật nữa để so thứ hạng.</div>`; }
+  else if (ky.ly_do_bo_tin_hieu) { len = giam = `<div class="trong-rong">${anToan(ky.ly_do_bo_tin_hieu)}</div>`; }
+  else {
+    len = ky.nhom.filter(n => n["tin_hieu_" + xepTheo] === "dang_vuon_len").sort((a, b) => b["thay_doi_hang_" + xepTheo] - a["thay_doi_hang_" + xepTheo]).map(dong).join("")
+          || `<div class="trong-rong">Chưa có ngành nào bứt lên.</div>`;
+    giam = ky.nhom.filter(n => n["tin_hieu_" + xepTheo] === "tot_dau_dang_giam").sort((a, b) => a["hang_" + xepTheo] - b["hang_" + xepTheo]).map(dong).join("")
+          || `<div class="trong-rong">Tốp đầu đang giữ vững phong độ.</div>`;
+  }
+  const sale = (pt().sale_sap_toi || []).map(s => `<div class="dong-th tinh"><span class="o-bt nho" style="--m:#ec2f7c">🎁</span><span class="ten-th">${anToan(s.ten)}<div class="phu">ngày ${ngayNgan(s.ngay)}</div></span><span class="dem-nguoc">còn ${s.con_ngay} ngày</span></div>`).join("")
+          || `<div class="trong-rong">Không có đợt sale lớn trong 3 tuần tới.</div>`;
+  document.getElementById("tinHieu").innerHTML = `
+    <div class="o-th len"><div class="dau-th"><span class="tron">🚀</span>Đang bứt phá thứ hạng<small>${so}</small></div><div class="than-th">${len}</div></div>
+    <div class="o-th giam"><div class="dau-th"><span class="tron">⚠️</span>Tốp đầu đang hụt hơi<small>${so}</small></div><div class="than-th">${giam}</div></div>
+    <div class="o-th sale"><div class="dau-th"><span class="tron">🗓️</span>Lịch sale sắp tới</div><div class="than-th">${sale}</div></div>`;
 }
 
 // ---------- Đường xu hướng nhỏ ----------
 function duongNho(du) {
   if (!du || du.length < 2) return `<span class="phu">–</span>`;
-  const R = 110, C = 30, gt = du.map(d => d.sale ? null : d.so_ban);
+  const R = 140, C = 40, gt = du.map(d => d.sale ? null : d.so_ban);
   const hop = gt.filter(v => v !== null), lon = Math.max(...hop, 1), nho = Math.min(...hop, 0);
-  const x = i => (i / (du.length - 1)) * (R - 4) + 2;
-  const y = v => C - 3 - ((v - nho) / (lon - nho || 1)) * (C - 6);
-  let d = "", dau = true;
-  gt.forEach((v, i) => { if (v === null) { dau = true; return; } d += (dau ? "M" : "L") + x(i).toFixed(1) + " " + y(v).toFixed(1) + " "; dau = false; });
-  const cuoi = hop.slice(-7), truoc = hop.slice(-14, -7);
+  const x = i => (i / (du.length - 1)) * (R - 8) + 2;
+  const y = v => C - 4 - ((v - nho) / (lon - nho || 1)) * (C - 10);
+  const diem = gt.map((v, i) => v === null ? null : [x(i), y(v)]).filter(Boolean);
+  const duong = "M" + diem.map(d => d[0].toFixed(1) + " " + d[1].toFixed(1)).join(" L");
+  const vung = duong + ` L${diem[diem.length - 1][0].toFixed(1)} ${C} L${diem[0][0].toFixed(1)} ${C} Z`;
   const tb = a => a.reduce((s, v) => s + v, 0) / (a.length || 1);
-  const mau = truoc.length && tb(cuoi) < tb(truoc) ? "var(--giam)" : "var(--tang)";
-  return `<svg width="${R}" height="${C}" viewBox="0 0 ${R} ${C}" aria-hidden="true"><path d="${d}" fill="none" stroke="${mau}" stroke-width="1.8" stroke-linejoin="round"/></svg>`;
+  const len = !(hop.slice(-14, -7).length && tb(hop.slice(-7)) < tb(hop.slice(-14, -7)));
+  const mau = len ? "#0e9f6e" : "#e5484d", ma = "g" + Math.random().toString(36).slice(2, 8);
+  const cuoi = diem[diem.length - 1];
+  return `<svg width="${R}" height="${C}" viewBox="0 0 ${R} ${C}" aria-hidden="true">
+    <defs><linearGradient id="${ma}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${mau}" stop-opacity=".28"/><stop offset="1" stop-color="${mau}" stop-opacity="0"/></linearGradient></defs>
+    <path d="${vung}" fill="url(#${ma})"/><path d="${duong}" fill="none" stroke="${mau}" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="${cuoi[0].toFixed(1)}" cy="${cuoi[1].toFixed(1)}" r="3.4" fill="#fff" stroke="${mau}" stroke-width="2"/></svg>`;
+}
+
+// Link nhanh tới gian hàng uy tín số 1 của ngành (bấm là sang Shopee, không mở bảng phân tích)
+function linkNhanh(p) {
+  const g = p && (p.gian_hang || []).find(x => x.lien_ket && /^https?:\/\//.test(x.lien_ket));
+  return g ? `<a class="nut-gh-nhanh" href="${anToan(g.lien_ket)}" target="_blank" rel="sponsored noopener" data-ngoai>🛍️ Mua ở ${anToan(g.ten.length > 22 ? g.ten.slice(0, 21) + "…" : g.ten)}</a>` : "";
 }
 
 // ---------- Bảng xếp hạng ----------
 function veXepHang(ky) {
   const nhom = [...ky.nhom].sort((a, b) => b[xepTheo] - a[xepTheo]);
   document.getElementById("cotChinh").textContent = xepTheo === "so_ban" ? "Số bán" : "Doanh thu";
-  document.getElementById("moTaXepHang").textContent = ky.tu_ngay ? `${ky.ten}, từ ${ngayVN(ky.tu_ngay)} đến ${ngayVN(ky.den_ngay)}. Bấm vào nhóm để xem phân tích.` : "";
+  document.getElementById("moTaXepHang").textContent = ky.tu_ngay ? `${ky.ten}, ${ngayVN(ky.tu_ngay)} đến ${ngayVN(ky.den_ngay)}. Bấm vào ngành hàng để xem phân tích.` : "";
+  const lonNhat = nhom.length ? nhom[0][xepTheo] || 1 : 1;
   document.getElementById("bangNhom").innerHTML = nhom.length ? nhom.map((n, i) => {
     n.top_san_pham.forEach(ghiNho);
-    const p = pt().nhom[n.ten];
+    const p = pt().nhom[n.ten], m = nganh(n.ten)[1];
     const dh = n["thay_doi_hang_" + xepTheo];
-    const doiHang = dh === null || dh === undefined ? `<span class="doi-hang"></span>`
-      : dh > 0 ? `<span class="doi-hang len">▲${dh}</span>` : dh < 0 ? `<span class="doi-hang xuong">▼${-dh}</span>` : `<span class="doi-hang giu">–</span>`;
+    const doiHang = dh === null || dh === undefined ? "" : dh > 0 ? `<span class="doi-hang len">▲${dh}</span>` : dh < 0 ? `<span class="doi-hang xuong">▼${-dh}</span>` : `<span class="doi-hang giu">–</span>`;
     const th = n["tin_hieu_" + xepTheo];
-    const nhanTh = th === "dang_vuon_len" ? `<span class="chip len vien">Đang vươn lên</span>` : th === "tot_dau_dang_giam" ? `<span class="chip vang vien">Tốp đầu đang giảm</span>` : "";
-    return `<tr tabindex="0" data-nhom="${anToan(n.ten)}">
-      <td><div class="o-hang"><span class="so">${i + 1}</span>${doiHang}</div></td>
-      <td><div class="ten-xh">${anToan(n.ten)}</div><div class="ds-chip">${p ? chip(p.giai_doan) : ""}${nhanTh}</div></td>
+    const nhanTh = th === "dang_vuon_len" ? `<span class="chip tim">🚀 Đang bứt phá</span>` : th === "tot_dau_dang_giam" ? `<span class="chip vang">⚠️ Đang hụt hơi</span>` : "";
+    const bd = n.thay_doi_phan_tram;
+    return `<tr tabindex="0" data-nhom="${anToan(n.ten)}" class="${i < 3 ? "top" + (i + 1) : ""}">
+      <td><div class="o-hang">${huy(i)}${doiHang}</div></td>
+      <td><div class="o-ten">${oBt(n.ten)}<div style="min-width:0"><div class="ten-xh">${anToan(n.ten)}</div><div class="ds-chip">${p ? chip(p.giai_doan) : ""}${nhanTh}</div>${linkNhanh(p)}</div></div></td>
       <td class="an-dt">${p ? duongNho(p.bieu_do) : ""}</td>
       <td class="phai"><div class="so-chinh">${xepTheo === "so_ban" ? soVN(n.so_ban) : tienGon(n.doanh_thu)}</div>
-        <div class="phu">${xepTheo === "so_ban" ? tienGon(n.doanh_thu) : soVN(n.so_ban) + " sp"}</div></td>
-      <td class="phai"><span class="bien-dong ${lopBienDong(n.thay_doi_phan_tram)}">${phanTram(n.thay_doi_phan_tram)}</span></td>
+        <div class="phu">${xepTheo === "so_ban" ? tienGon(n.doanh_thu) : soVN(n.so_ban) + " sp"}, ${soLe(n.ty_trong)}%</div>
+        <div class="thanh-tt" style="--m:${m}"><i style="width:${(n[xepTheo] / lonNhat * 100).toFixed(1)}%"></i></div></td>
+      <td class="phai"><span class="vien-thuoc ${lopBienDong(bd)}">${bd === null ? "–" : (bd >= 0 ? "▲ " : "▼ ") + soLe(Math.abs(bd)) + "%"}</span></td>
       <td class="an-dt">${p ? chipCt(p.canh_tranh) : ""}</td>
     </tr>`;
   }).join("") : `<tr><td colspan="6" class="trong-rong">Chưa có số liệu cho kỳ này. Lần cập nhật tới sẽ có.</td></tr>`;
 }
 
-// ---------- Sản phẩm ----------
-function theSp(sp, so, phu) {
+// ---------- Thẻ sản phẩm ----------
+function theSp(sp, tem, loaiTem, phu) {
   ghiNho(sp);
-  const p = pt().san_pham[sp.ma];
+  const p = pt().san_pham[sp.ma], [bt, m] = nganh(sp.nhom);
   return `<button class="the-sp" data-sp="${anToan(sp.ma)}">
-    <img src="${anToan(sp.anh)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">
-    <div style="min-width:0"><div class="ten-sp">${anToan(sp.ten)}</div>
-      <div class="duoi"><span class="so-chinh">${so}</span>${p ? chip(p.giai_doan) : ""}</div>
-      <div class="phu">${phu}</div></div>
+    <div class="anh-sp" style="--m:${m}"><span aria-hidden="true">${bt}</span>
+      ${sp.anh ? `<img src="${anToan(sp.anh)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}
+      ${tem ? `<span class="tem ${loaiTem}">${tem}</span>` : ""}</div>
+    <div class="noi-dung"><div class="ten-sp">${anToan(sp.ten)}</div>
+      <div class="gia">${tienGon(sp.gia)}</div>
+      <div class="phu">${phu}</div>
+      <div class="duoi">${p ? chip(p.giai_doan) : ""}</div></div>
   </button>`;
 }
 function veSanPham(ky) {
@@ -490,19 +530,19 @@ function veSanPham(ky) {
   let html = "";
   if (dsSp === "bung_no") {
     const bn = duLieu.bung_no || {san_pham: []};
-    moTa.textContent = "Bán trong ngày gấp từ 3 lần trung bình các ngày trước.";
-    html = bn.san_pham.map(s => theSp(s, `gấp ${soLe(s.gap_lan)} lần`, `${soVN(s.so_ban)} sp/ngày, trước đó ${soVN(s.trung_binh_truoc)}. ${anToan(s.nhom)}, ${tienGon(s.gia)}`)).join("")
+    moTa.textContent = "Sản phẩm bán trong ngày gấp từ 3 lần trung bình các ngày trước, bắt sóng sớm trước người khác.";
+    html = bn.san_pham.map(s => theSp(s, `🔥 gấp ${soLe(s.gap_lan)} lần`, "bung_no", `${soVN(s.so_ban)} sp hôm nay, trước ${soVN(s.trung_binh_truoc)}`)).join("")
         || `<div class="trong-rong">${anToan(bn.ly_do_bo_qua || "Hôm nay chưa có sản phẩm nào bùng nổ.")}</div>`;
   } else if (dsSp === "quang_ba") {
     const qb = duLieu.nen_quang_ba || {san_pham: []};
-    moTa.textContent = qb.san_pham.length ? `Hoa hồng ước tính cao nhất ${qb.so_ngay} ngày qua, tính bằng số bán nhân giá nhân tỷ lệ hoa hồng.` : "";
-    html = qb.san_pham.map(s => theSp(s, tienGon(s.hoa_hong_uoc_tinh), `Hoa hồng ${soLe(s.hoa_hong)}%, ${soVN(s.so_ban)} sp. ${anToan(s.nhom)}, ${tienGon(s.gia)}`)).join("")
+    moTa.textContent = qb.san_pham.length ? `Hoa hồng ước tính cao nhất ${qb.so_ngay} ngày qua, bằng số bán nhân giá nhân tỷ lệ hoa hồng.` : "";
+    html = qb.san_pham.map(s => theSp(s, `💰 ${tienGon(s.hoa_hong_uoc_tinh)}`, "quang_ba", `Hoa hồng ${soLe(s.hoa_hong)}%, ${soVN(s.so_ban)} sp đã bán`)).join("")
         || `<div class="trong-rong">${anToan(qb.ly_do_bo_qua || "Chưa có dữ liệu hoa hồng.")}</div>`;
   } else {
-    moTa.textContent = ky.tu_ngay ? `${ky.ten}, từ ${ngayVN(ky.tu_ngay)} đến ${ngayVN(ky.den_ngay)}.` : "";
+    moTa.textContent = ky.tu_ngay ? `${ky.ten}, ${ngayVN(ky.tu_ngay)} đến ${ngayVN(ky.den_ngay)}.` : "";
     const ds = [...ky.top_san_pham].sort((a, b) => b[xepTheo] - a[xepTheo]);
-    html = ds.map(s => theSp(s, xepTheo === "so_ban" ? soVN(s.so_ban) + " sp" : tienGon(s.doanh_thu),
-        `${xepTheo === "so_ban" ? tienGon(s.doanh_thu) : soVN(s.so_ban) + " sp"}. ${anToan(s.nhom)}, ${tienGon(s.gia)}`)).join("")
+    html = ds.map((s, i) => theSp(s, `#${i + 1}`, "ban_nhieu",
+        xepTheo === "so_ban" ? `${soVN(s.so_ban)} sp, doanh thu ${tienGon(s.doanh_thu)}` : `Doanh thu ${tienGon(s.doanh_thu)}, ${soVN(s.so_ban)} sp`)).join("")
         || `<div class="trong-rong">Chưa có số liệu cho kỳ này.</div>`;
   }
   hop.innerHTML = html;
@@ -512,100 +552,120 @@ function veSanPham(ky) {
 function veTrang() {
   const ky = duLieu.ky[kyDangChon];
   let tb = "";
-  if (duLieu.ngay_sale) tb += `<div class="bao sale">Ngày ${ngayVN(duLieu.ngay)} là ${anToan(duLieu.ngay_sale)}: số bán cao bất thường, đừng so với ngày thường.</div>`;
-  (duLieu.sale_sap_toi || []).forEach(x => tb += `<div class="bao sale">${anToan(x.ten)} vào ngày ${ngayVN(x.ngay)}. Nên chuẩn bị hàng và link quảng bá từ bây giờ.</div>`);
+  if (duLieu.ngay_sale) tb += `<div class="bao sale">🎉 Ngày ${ngayVN(duLieu.ngay)} là ${anToan(duLieu.ngay_sale)}: số bán cao bất thường, đừng so với ngày thường.</div>`;
   if (!ky.tu_ngay) tb += `<div class="bao">Mới có ngày số liệu đầu tiên. Từ lần cập nhật đêm tới mới tính được số bán.</div>`;
   else if (ky.so_ngay_co_du_lieu < ky.so_ngay_can)
     tb += `<div class="bao">Kỳ ${ky.ten.toLowerCase()} mới có ${ky.so_ngay_co_du_lieu} ngày số liệu (từ ${ngayVN(ky.tu_ngay)}); số liệu sẽ đủ sau ${ky.so_ngay_can} ngày.</div>`;
   document.getElementById("thongBao").innerHTML = tb;
-  veBanTin(); veBanDo(); veTinHieu(ky); veXepHang(ky); veSanPham(ky);
+  veBanTin(); veTinHieu(ky); veXepHang(ky); veSanPham(ky);
 }
 
-// ---------- Biểu đồ 30 ngày trong bảng phân tích ----------
-function bieuDo(du) {
+// ---------- Biểu đồ trong bảng phân tích ----------
+function bieuDo(du, mau) {
   if (!du || !du.length) return `<div class="phu">Chưa có số liệu theo ngày.</div>`;
-  const R = Math.max(300, Math.min(600, (bangPt.clientWidth || 600) - 70)), C = 170, le = 4, day = 22, tren = 18;
+  mau = mau || "#6a4cff";
+  const R = Math.max(300, Math.min(620, (bangPt.clientWidth || 620) - 76)), C = 170, le = 4, day = 22, tren = 18;
   const thuong = du.filter(d => !d.sale).map(d => d.so_ban);
   const lon = Math.max(...(thuong.length ? thuong : du.map(d => d.so_ban)), 1);
   const w = (R - le * 2) / du.length;
   let cot = "";
   du.forEach((d, i) => {
-    const h = Math.min(d.so_ban / lon, 1.08) * (C - day - tren), x = le + i * w + w * 0.15, y = C - day - h;
-    cot += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(w * 0.7).toFixed(1)}" height="${Math.max(h, 1).toFixed(1)}" rx="2" fill="${d.sale ? "var(--cot-sale)" : "var(--cot)"}"><title>${ngayNgan(d.ngay)}: ${soVN(d.so_ban)} sp${d.sale ? " (ngày siêu sale)" : ""}</title></rect>`;
-    if (d.so_ban > lon) cot += `<text x="${(x + w * 0.35).toFixed(1)}" y="${(y - 3).toFixed(1)}" font-size="11" fill="var(--phu)" text-anchor="middle">▲</text>`;
+    const h = Math.min(d.so_ban / lon, 1.08) * (C - day - tren), x = le + i * w + w * 0.14, y = C - day - h;
+    cot += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(w * 0.72).toFixed(1)}" height="${Math.max(h, 1).toFixed(1)}" rx="3" fill="${d.sale ? "#ffb3cf" : mau}"${d.sale ? "" : ` fill-opacity="${(0.4 + 0.6 * (i / du.length)).toFixed(2)}"`}><title>${ngayNgan(d.ngay)}: ${soVN(d.so_ban)} sp${d.sale ? " (ngày siêu sale)" : ""}</title></rect>`;
+    if (d.so_ban > lon) cot += `<text x="${(x + w * 0.36).toFixed(1)}" y="${(y - 3).toFixed(1)}" font-size="11" fill="#ec2f7c" text-anchor="middle">▲</text>`;
   });
   const vt = [0, Math.floor(du.length / 2), du.length - 1].filter((v, i, a) => a.indexOf(v) === i);
   const nhan = vt.map(i => {
     const neo = i === 0 ? "start" : i === du.length - 1 ? "end" : "middle";
     const x = i === 0 ? le : i === du.length - 1 ? R - le : le + i * w + w / 2;
-    return `<text x="${x.toFixed(1)}" y="${C - 6}" font-size="12" fill="var(--phu)" text-anchor="${neo}">${ngayNgan(du[i].ngay)}</text>`;
+    return `<text x="${x.toFixed(1)}" y="${C - 6}" font-size="12" fill="#6b7088" text-anchor="${neo}">${ngayNgan(du[i].ngay)}</text>`;
   }).join("");
   const coSale = du.some(d => d.sale);
   return `<svg viewBox="0 0 ${R} ${C}" role="img" aria-label="Số bán theo ngày">
-      <line x1="${le}" x2="${R - le}" y1="${C - day}" y2="${C - day}" stroke="var(--vien)"/>
-      <text x="${le}" y="12" font-size="12" fill="var(--phu)">cao nhất ${coSale ? "ngày thường " : ""}${soVN(lon)} sp/ngày</text>${cot}${nhan}</svg>
-    ${coSale ? `<div class="chu-thich"><span><i style="background:var(--cot);border-radius:2px"></i>Ngày thường</span><span><i style="background:var(--cot-sale);border-radius:2px"></i>Ngày siêu sale, không tính xu hướng</span></div>` : ""}`;
+      <line x1="${le}" x2="${R - le}" y1="${C - day}" y2="${C - day}" stroke="#e3e5ef"/>
+      <text x="${le}" y="12" font-size="12" fill="#6b7088">cao nhất ${coSale ? "ngày thường " : ""}${soVN(lon)} sp/ngày</text>${cot}${nhan}</svg>
+    ${coSale ? `<div class="chu-thich"><span><i style="background:${mau}"></i>Ngày thường</span><span><i style="background:#ffb3cf"></i>Ngày siêu sale, không tính xu hướng</span></div>` : ""}`;
 }
 const oCs = (nhan, gt, phu) => `<div><div class="phu">${nhan}</div><div class="gt">${gt}</div>${phu ? `<div class="phu">${phu}</div>` : ""}</div>`;
+const bienDongMau = x => x === null || x === undefined ? "–" : `<span style="color:var(${x >= 0 ? "--tang" : "--giam"})">${phanTram(x)}</span>`;
 function khoiLoiKhuyen(lk) {
   if (!lk) return "";
   const conLai = lk.nguoi_ban.slice(1);   // câu đầu đã hiện ở ô Kết luận
-  return `${conLai.length ? `<div class="pt-khoi"><h3>Lời khuyên thêm cho người bán</h3><ul>${conLai.map(x => `<li>${anToan(x)}</li>`).join("")}</ul></div>` : ""}
-    ${lk.tiep_thi.length ? `<div class="pt-khoi"><h3>Cho người làm tiếp thị liên kết</h3><ul>${lk.tiep_thi.map(x => `<li>${anToan(x)}</li>`).join("")}</ul></div>` : ""}`;
+  return `${conLai.length ? `<div class="pt-khoi"><h3>🧭 Lời khuyên thêm cho người bán</h3><ul>${conLai.map(x => `<li>${anToan(x)}</li>`).join("")}</ul></div>` : ""}
+    ${lk.tiep_thi.length ? `<div class="pt-khoi"><h3>📣 Cho người làm tiếp thị liên kết</h3><ul>${lk.tiep_thi.map(x => `<li>${anToan(x)}</li>`).join("")}</ul></div>` : ""}`;
 }
-const bienDongMau = x => x === null || x === undefined ? "–" : `<span style="color:var(${x >= 0 ? "--tang" : "--giam"})">${phanTram(x)}</span>`;
+
+const TEN_SHOP = {mall: "Mall", yeu_thich_plus: "Yêu thích+", yeu_thich: "Yêu thích"};
+function khoiGianHang(ten) {
+  const ds = (pt().nhom[ten] || {}).gian_hang || [], [bt, m] = nganh(ten);
+  if (!ds.length) return `<div class="khoi-gh"><h3>🏪 Gian hàng uy tín nên mua</h3><p class="phu">Chưa có gian hàng nào đạt chuẩn uy tín (từ 4,7 sao và bán từ 30 sản phẩm trong 7 ngày). Danh sách sẽ có khi đủ số liệu.</p></div>`;
+  return `<div class="khoi-gh"><h3>🏪 Gian hàng uy tín nên mua</h3>
+    <p class="phu">Chọn theo số bán 7 ngày, điểm đánh giá và nhãn Shopee Mall, Shop Yêu thích. Bấm để vào thẳng gian hàng trên Shopee.</p>
+    ${ds.map((g, i) => {
+      const nhan = (g.loai || []).filter(x => TEN_SHOP[x]).sort((a, b) => ["mall", "yeu_thich_plus", "yeu_thich"].indexOf(a) - ["mall", "yeu_thich_plus", "yeu_thich"].indexOf(b)).slice(0, 1)
+                   .map(x => `<span class="the-shop ${x}">${TEN_SHOP[x]}</span>`).join("");
+      const link = g.lien_ket && /^https?:\/\//.test(g.lien_ket) ? g.lien_ket : "";
+      return `<div class="gh${link ? "" : " khong-link"}">${huy(i)}
+        <span class="anh-gh" style="--m:${m}">${bt}${g.anh ? `<img src="${anToan(g.anh)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}</span>
+        <div style="min-width:0"><div class="ten-gh">${nhan}${anToan(g.ten)}</div>
+          <div class="chi-tiet-gh"><span style="color:#f5a524">★</span> ${soLe(g.danh_gia)} · ${soVN(g.so_ban_7_ngay)} sp bán 7 ngày · ${g.so_sp_ban_chay} sản phẩm bán chạy</div>
+          ${g.sp_noi_bat ? `<div class="chi-tiet-gh">Nổi bật: ${anToan(g.sp_noi_bat)}</div>` : ""}</div>
+        <a class="vao-gh" href="${anToan(link || "#")}" target="_blank" rel="sponsored noopener">${g.la_link_gian_hang ? "Vào gian hàng" : "Xem sản phẩm"} ↗</a>
+      </div>`;
+    }).join("")}</div>`;
+}
 
 function moPhanTichNhom(ten) {
-  const p = pt().nhom[ten], ky = duLieu.ky[kyDangChon], nk = ky.nhom.find(n => n.ten === ten);
-  if (!p) { moBang(`<div class="pt-dau"><div><h2>${anToan(ten)}</h2></div>${nutDong()}</div><div class="pt-than"><div class="pt-khoi">Chưa có số liệu phân tích cho nhóm này.</div></div>`); return; }
+  const p = pt().nhom[ten], ky = duLieu.ky[kyDangChon], nk = ky.nhom.find(n => n.ten === ten), [bt, m] = nganh(ten);
+  if (!p) { moBang(`<div class="pt-dau">${oBt(ten)}<div><h2>${anToan(ten)}</h2></div>${nutDong()}</div><div class="pt-than"><div class="pt-khoi">Chưa có số liệu phân tích cho ngành này.</div></div>`); return; }
   const gd = p.giai_doan, ct = p.canh_tranh, gia = p.khoang_gia;
   const loai = (p.theo_loai || []).map(l => `<tr>
-      <td><b>${anToan(l.ten)}</b><div class="phu">${soVN(l.ban_7_ngay)} sp trong 7 ngày</div></td>
+      <td><b>${anToan(vietHoa(l.ten))}</b><div class="phu">${soVN(l.ban_7_ngay)} sp / 7 ngày</div></td>
       <td>${chip(l.giai_doan)}<div class="phu">${phanTram(l.giai_doan.tang_tuan)}</div></td>
       <td class="an-dt">${chipCt(l.canh_tranh)}</td>
       <td class="an-dt">${l.khoang_gia ? tienGon(l.khoang_gia.pho_bien) : "–"}</td>
       <td>${anToan(l.ket_luan)}</td></tr>`).join("");
   const sp = nk ? nk.top_san_pham : [];
   const ketLuan = p.loi_khuyen && p.loi_khuyen.nguoi_ban[0];
-  moBang(`<div class="pt-dau"><div><h2>${anToan(ten)}</h2><div class="ds-chip">${chip(gd)}${nk ? `<span class="chip xam">Hạng ${nk.hang}, ${anToan(ky.ten.toLowerCase())}</span>` : ""}</div></div>${nutDong()}</div>
+  moBang(`<div class="pt-dau">${oBt(ten)}<div style="min-width:0"><h2>${anToan(ten)}</h2><div class="ds-chip">${chip(gd)}${nk ? `<span class="chip xam">Hạng ${nk.hang}, ${anToan(ky.ten.toLowerCase())}</span>` : ""}</div></div>${nutDong()}</div>
     <div class="pt-than">
       ${ketLuan ? `<div class="ket-luan"><span class="phu">Kết luận</span><b>${anToan(ketLuan)}</b></div>` : ""}
+      ${khoiGianHang(ten)}
       <div class="chi-so">
         ${oCs("Trung bình mỗi ngày", soVN(gd.tb_7_ngay) + " sp", "7 ngày gần nhất")}
         ${oCs("So với tuần trước", bienDongMau(gd.tang_tuan), gd.da_gan_day === null ? "cần 8 ngày số liệu" : `3 ngày gần đây ${phanTram(gd.da_gan_day)}`)}
         ${oCs("Độ cạnh tranh", ct.muc ? TEN_CT[ct.muc] : "–", ct.muc ? `${ct.so_shop} shop, 3 shop đầu chiếm ${soLe(ct.top3_phan_tram)}%` : "")}
-        ${oCs("Giá bán chạy nhất", gia ? tienGon(gia.pho_bien) : "–", gia ? `khoảng ${tienGon(gia.thap)} đến ${tienGon(gia.cao)}` : "")}
+        ${oCs("Giá bán chạy nhất", gia ? `<span style="color:var(--cam)">${tienGon(gia.pho_bien)}</span>` : "–", gia ? `khoảng ${tienGon(gia.thap)} đến ${tienGon(gia.cao)}` : "")}
       </div>
-      <div class="pt-khoi bieu-do"><h3>Số bán 30 ngày gần nhất</h3>${bieuDo(p.bieu_do)}</div>
-      ${loai ? `<div class="pt-khoi"><h3>Từng loại hàng trong nhóm</h3><table class="bang-loai"><thead><tr><th>Loại hàng</th><th>Giai đoạn</th><th class="an-dt">Cạnh tranh</th><th class="an-dt">Giá phổ biến</th><th>Nên làm</th></tr></thead><tbody>${loai}</tbody></table></div>` : ""}
+      <div class="pt-khoi bieu-do"><h3>📊 Số bán 30 ngày gần nhất</h3>${bieuDo(p.bieu_do, m)}</div>
+      ${loai ? `<div class="pt-khoi"><h3>${bt} Từng loại hàng trong ngành</h3><table class="bang-loai"><thead><tr><th>Loại hàng</th><th>Giai đoạn</th><th class="an-dt">Cạnh tranh</th><th class="an-dt">Giá phổ biến</th><th>Nên làm</th></tr></thead><tbody>${loai}</tbody></table></div>` : ""}
       ${khoiLoiKhuyen(p.loi_khuyen)}
-      ${ct.shop_dau && ct.shop_dau.length ? `<div class="pt-khoi"><h3>Shop dẫn đầu nhóm, 7 ngày qua</h3>${ct.shop_dau.map(s => `<div class="shop-dau"><span>${anToan(s.ten)}</span><b class="so">${soLe(s.phan_tram)}%</b></div>`).join("")}</div>` : ""}
-      ${sp.length ? `<div class="pt-khoi"><h3>Sản phẩm bán chạy trong nhóm</h3><div class="luoi-sp">${sp.map(s => theSp(s, soVN(s.so_ban) + " sp", tienGon(s.gia))).join("")}</div></div>` : ""}
+      ${ct.shop_dau && ct.shop_dau.length ? `<div class="pt-khoi"><h3>🏪 Shop dẫn đầu ngành, 7 ngày qua</h3>${ct.shop_dau.map((s, i) => `<div class="shop-dau">${huy(i)}<span style="flex:1">${anToan(s.ten)}</span><b>${soLe(s.phan_tram)}%</b></div>`).join("")}</div>` : ""}
+      ${sp.length ? `<div class="pt-khoi"><h3>🛒 Sản phẩm bán chạy trong ngành</h3><div class="luoi-sp">${sp.slice(0, 6).map((s, i) => theSp(s, `#${i + 1}`, "ban_nhieu", soVN(s.so_ban) + " sp")).join("")}</div></div>` : ""}
     </div>`);
 }
 
 function moPhanTichSp(ma) {
   const sp = KHO_SP[ma]; if (!sp) return;
-  const p = pt().san_pham[ma], gd = p ? p.giai_doan : null, giaNhom = pt().nhom[sp.nhom]?.khoang_gia;
+  const p = pt().san_pham[ma], gd = p ? p.giai_doan : null, giaNhom = pt().nhom[sp.nhom]?.khoang_gia, [bt, m] = nganh(sp.nhom);
   const lienKet = sp.duong_dan && /^https?:\/\//.test(sp.duong_dan) ? sp.duong_dan : null;
   const ketLuan = p && p.loi_khuyen.nguoi_ban[0];
-  moBang(`<div class="pt-dau"><img src="${anToan(sp.anh)}" alt="" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">
-      <div style="min-width:0"><h2 style="font-size:19px">${anToan(sp.ten)}</h2><div class="ds-chip">${chip(gd)}<span class="chip xam">${anToan(sp.nhom)}</span></div>
-      ${sp.cua_hang ? `<div class="phu" style="margin-top:4px">${anToan(sp.cua_hang)}</div>` : ""}</div>${nutDong()}</div>
+  moBang(`<div class="pt-dau">${sp.anh ? `<img src="${anToan(sp.anh)}" alt="" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">` : oBt(sp.nhom)}
+      <div style="min-width:0"><h2 style="font-size:18px">${anToan(sp.ten)}</h2><div class="ds-chip">${chip(gd)}<span class="chip xam">${bt} ${anToan(sp.nhom)}</span></div></div>${nutDong()}</div>
     <div class="pt-than">
       ${ketLuan ? `<div class="ket-luan"><span class="phu">Kết luận</span><b>${anToan(ketLuan)}</b></div>` : ""}
-      ${lienKet ? `<a class="nut-chinh" href="${anToan(lienKet)}" target="_blank" rel="noopener">Mở sản phẩm trên Shopee</a>` : ""}
+      ${lienKet ? `<a class="nut-chinh" href="${anToan(lienKet)}" target="_blank" rel="noopener">🛒 Mở sản phẩm trên Shopee</a>` : ""}
       <div class="chi-so">
+        ${oCs("Giá", `<span style="color:var(--cam)">${tienGon(sp.gia)}</span>`, giaNhom ? `ngành bán chạy ở ${tienGon(giaNhom.thap)} đến ${tienGon(giaNhom.cao)}` : "")}
         ${oCs("Bán 7 ngày qua", p ? soVN(p.ban_7_ngay) + " sp" : "–", gd ? `trung bình ${soVN(gd.tb_7_ngay)} sp mỗi ngày` : "")}
         ${oCs("So với tuần trước", bienDongMau(gd ? gd.tang_tuan : null), gd && gd.da_gan_day !== null ? `3 ngày gần đây ${phanTram(gd.da_gan_day)}` : "cần 8 ngày số liệu")}
-        ${oCs("Giá", tienGon(sp.gia), giaNhom ? `nhóm bán chạy ở ${tienGon(giaNhom.thap)} đến ${tienGon(giaNhom.cao)}` : "")}
-        ${oCs("Chiếm trong nhóm", p && p.phan_tram_trong_nhom !== null ? soLe(p.phan_tram_trong_nhom) + "%" : "–", "số bán 7 ngày của cả nhóm")}
-        ${oCs("Đánh giá", sp.danh_gia ? soLe(sp.danh_gia) + " sao" : "–", "")}
-        ${oCs("Hoa hồng", sp.hoa_hong ? soLe(sp.hoa_hong) + "%" : "–", sp.hoa_hong_uoc_tinh ? `ước tính ${tienGon(sp.hoa_hong_uoc_tinh)}` : "")}
+        ${oCs("Chiếm trong ngành", p && p.phan_tram_trong_nhom !== null ? soLe(p.phan_tram_trong_nhom) + "%" : "–", "số bán 7 ngày của cả ngành")}
+        ${oCs("Đánh giá", sp.danh_gia ? `<span style="color:#f5a524">★</span> ${soLe(sp.danh_gia)}` : "–", "")}
+        ${oCs("Hoa hồng", sp.hoa_hong ? `<span style="color:var(--hong)">${soLe(sp.hoa_hong)}%</span>` : "–", sp.hoa_hong_uoc_tinh ? `ước tính ${tienGon(sp.hoa_hong_uoc_tinh)}` : "")}
       </div>
-      <div class="pt-khoi bieu-do"><h3>Số bán theo ngày</h3>${bieuDo(p && p.bieu_do)}</div>
+      <div class="pt-khoi bieu-do"><h3>📊 Số bán theo ngày</h3>${bieuDo(p && p.bieu_do, m)}</div>
       ${khoiLoiKhuyen(p && p.loi_khuyen)}
-      ${sp.nhom ? `<button class="nut-phu" data-nhom="${anToan(sp.nhom)}">Xem phân tích nhóm ${anToan(sp.nhom)}</button>` : ""}
+      ${sp.nhom ? `<button class="nut-phu" data-nhom="${anToan(sp.nhom)}">${bt} Xem phân tích ngành ${anToan(sp.nhom)}</button>` : ""}
     </div>`);
 }
 
@@ -626,9 +686,10 @@ function dongBang() {
 manChe.addEventListener("click", dongBang);
 document.addEventListener("keydown", e => {
   if (e.key === "Escape" && bangPt.classList.contains("mo")) dongBang();
-  if ((e.key === "Enter" || e.key === " ") && e.target.matches("tr[data-nhom], g[data-nhom]")) { e.preventDefault(); moPhanTichNhom(e.target.dataset.nhom); }
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches("tr[data-nhom]")) { e.preventDefault(); moPhanTichNhom(e.target.dataset.nhom); }
 });
 document.addEventListener("click", e => {
+  if (e.target.closest("[data-ngoai]")) return;   // link sang Shopee: để trình duyệt mở, không mở bảng
   const el = e.target.closest("[data-sp],[data-nhom],[data-dong]");
   if (!el) return;
   if (el.hasAttribute("data-dong")) dongBang();
@@ -646,9 +707,7 @@ function ganChon(id, khoa, gan) {
 }
 ganChon("chonKy", "ky", v => kyDangChon = v);
 ganChon("chonXep", "xep", v => xepTheo = v);
-ganChon("chonBanDo", "bd", v => kieuBanDo = v);
 ganChon("chonSp", "dssp", v => dsSp = v);
-let doiCo; window.addEventListener("resize", () => { clearTimeout(doiCo); doiCo = setTimeout(() => duLieu && veBanDo(), 200); });
 
 fetch("du_lieu/bang_xep_hang.json?t=" + Date.now())
   .then(r => { if (!r.ok) throw new Error(); return r.json(); })
@@ -661,6 +720,7 @@ fetch("du_lieu/bang_xep_hang.json?t=" + Date.now())
     document.getElementById("capNhat").textContent = "Chưa có số liệu";
     document.getElementById("tieuDe").textContent = "Chưa có số liệu.";
     document.getElementById("dienGiai").textContent = "Trang sẽ tự có số liệu sau lần cập nhật đầu tiên. Người quản lý trang chạy cập nhật trong mục Actions của GitHub.";
+    document.getElementById("bucTop").innerHTML = `<h2>🏆 Top ngành hàng</h2><div class="trong-rong">Sẽ có sau lần cập nhật đầu tiên.</div>`;
   });
 </script>
 </body>
