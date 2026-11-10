@@ -1,0 +1,42 @@
+# Lịch chạy tự động: mỗi sáng 6 giờ 47 (giờ Việt Nam) lấy dữ liệu Shopee,
+# tính xếp hạng, lưu vào thư mục du_lieu/ và gửi Telegram.
+name: Cập nhật bán chạy Shopee hằng ngày
+
+on:
+  schedule:
+    - cron: "47 23 * * *"   # 23:47 giờ quốc tế = 6:47 sáng giờ Việt Nam
+  workflow_dispatch:        # cho phép bấm nút chạy tay trong mục Actions
+
+permissions:
+  contents: write
+
+jobs:
+  cap-nhat:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lấy mã nguồn
+        uses: actions/checkout@v4
+
+      - name: Cài Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cài thư viện
+        run: pip install requests
+
+      - name: Lấy dữ liệu và tính xếp hạng
+        env:
+          SHOPEE_APP_ID: ${{ secrets.SHOPEE_APP_ID }}
+          SHOPEE_SECRET: ${{ secrets.SHOPEE_SECRET }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python lay_du_lieu.py
+
+      - name: Lưu dữ liệu mới vào kho
+        run: |
+          git config user.name "may-cap-nhat"
+          git config user.email "may-cap-nhat@users.noreply.github.com"
+          git add du_lieu
+          git diff --cached --quiet || git commit -m "Cập nhật dữ liệu $(date -u -d '+7 hours' +%d/%m/%Y)"
+          git push
