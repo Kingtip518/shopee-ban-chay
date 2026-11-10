@@ -1,0 +1,25 @@
+{
+  "_ghi_chu": "Danh sách nhóm hàng cần theo dõi. Mỗi nhóm có các từ khóa tìm kiếm trên Shopee. Muốn thêm nhóm hoặc thêm từ khóa thì sửa trực tiếp vào đây.",
+  "nhom_hang": [
+    {"ten": "Thời trang nữ", "tu_khoa": ["váy nữ", "áo thun nữ", "quần jean nữ", "đồ bộ nữ"]},
+    {"ten": "Thời trang nam", "tu_khoa": ["áo thun nam", "quần short nam", "áo sơ mi nam", "quần jean nam"]},
+    {"ten": "Giày dép", "tu_khoa": ["giày thể thao", "dép nữ", "dép nam", "giày nữ"]},
+    {"ten": "Túi ví", "tu_khoa": ["túi xách nữ", "balo", "ví nam", "túi đeo chéo"]},
+    {"ten": "Mỹ phẩm – làm đẹp", "tu_khoa": ["son môi", "kem chống nắng", "sữa rửa mặt", "serum"]},
+    {"ten": "Chăm sóc cá nhân", "tu_khoa": ["dầu gội", "sữa tắm", "kem đánh răng", "nước hoa"]},
+    {"ten": "Mẹ và bé", "tu_khoa": ["bỉm", "sữa bột", "quần áo trẻ em", "đồ sơ sinh"]},
+    {"ten": "Nhà bếp – gia dụng", "tu_khoa": ["nồi chiên không dầu", "chảo chống dính", "hộp đựng thực phẩm", "máy xay sinh tố"]},
+    {"ten": "Nhà cửa – đời sống", "tu_khoa": ["chăn ga gối", "kệ để đồ", "đèn ngủ", "giấy vệ sinh"]},
+    {"ten": "Điện thoại – phụ kiện", "tu_khoa": ["ốp lưng điện thoại", "cáp sạc", "củ sạc nhanh", "kính cường lực"]},
+    {"ten": "Thiết bị điện tử", "tu_khoa": ["tai nghe bluetooth", "loa bluetooth", "đồng hồ thông minh", "camera wifi"]},
+    {"ten": "Máy tính – laptop", "tu_khoa": ["chuột không dây", "bàn phím cơ", "giá đỡ laptop", "usb"]},
+    {"ten": "Thực phẩm – đồ uống", "tu_khoa": ["đồ ăn vặt", "cà phê", "trà", "bánh kẹo"]},
+    {"ten": "Sức khỏe", "tu_khoa": ["vitamin", "khẩu trang", "máy đo huyết áp", "thực phẩm chức năng"]},
+    {"ten": "Thể thao – dã ngoại", "tu_khoa": ["quần áo tập gym", "thảm tập yoga", "lều cắm trại", "bình nước thể thao"]},
+    {"ten": "Đồ chơi", "tu_khoa": ["đồ chơi trẻ em", "lego", "gấu bông", "xe điều khiển"]},
+    {"ten": "Ô tô – xe máy", "tu_khoa": ["phụ kiện xe máy", "mũ bảo hiểm", "phụ kiện ô tô", "nước rửa xe"]},
+    {"ten": "Thú cưng", "tu_khoa": ["thức ăn cho mèo", "thức ăn cho chó", "cát vệ sinh mèo", "đồ chơi thú cưng"]},
+    {"ten": "Văn phòng phẩm", "tu_khoa": ["bút bi", "sổ tay", "giấy a4", "hộp bút"]},
+    {"ten": "Đồng hồ – trang sức", "tu_khoa": ["đồng hồ nam", "đồng hồ nữ", "vòng tay", "khuyên tai"]}
+  ]
+}
