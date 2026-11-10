@@ -39,6 +39,8 @@
                      padding: 7px 14px; border-radius: 7px; cursor: pointer; }
   .nhom-nut button.dang-chon { background: var(--cam); color: #fff; }
 
+  .thong-bao.sale { background: var(--cam-nhat); color: var(--cam); }
+  .ghi-chu-o { padding: 12px 16px; color: var(--chu-phu); font-size: 14px; }
   .thong-bao { background: var(--vang-nhat); color: var(--vang); border-radius: 10px; padding: 10px 14px;
                font-size: 14px; margin-bottom: 14px; }
 
@@ -114,7 +116,7 @@
 
   <div class="thanh-chon">
     <div class="nhom-nut" id="chonKy">
-      <button data-ky="ngay" class="dang-chon">Hôm nay</button>
+      <button data-ky="ngay" class="dang-chon">Theo ngày</button>
       <button data-ky="tuan">7 ngày</button>
       <button data-ky="thang">30 ngày</button>
     </div>
@@ -133,8 +135,18 @@
   </section>
 
   <section class="the">
+    <h2>🔥 Sản phẩm đang bùng nổ <small>bán trong ngày gấp từ 3 lần trung bình các ngày trước</small></h2>
+    <div class="danh-sach-sp" id="bangBungNo"></div>
+  </section>
+
+  <section class="the">
     <h2>Xếp hạng nhóm hàng <small>bấm vào nhóm để xem sản phẩm</small></h2>
     <div id="bangNhom"></div>
+  </section>
+
+  <section class="the">
+    <h2>💰 Nên quảng bá <small id="moTaQuangBa"></small></h2>
+    <div class="danh-sach-sp" id="bangQuangBa"></div>
   </section>
 
   <section class="the">
@@ -142,7 +154,7 @@
     <div class="danh-sach-sp" id="bangSp"></div>
   </section>
 
-  <footer>Mũi tên ▲▼ là số bậc tăng hoặc tụt so với lần cập nhật trước của cùng kỳ. "Tốp đầu đang giảm": lần trước ở hạng 1–5, nay tụt hạng (kể cả văng khỏi tốp 5) hoặc số bán giảm từ 10% trở lên. "Đang vươn lên": lần trước ở ngoài tốp 5, nay tăng từ 2 bậc trở lên (kể cả lọt vào tốp 5).<br>Số bán tính từ chênh lệch "đã bán" Shopee công bố giữa các ngày. Doanh thu là ước tính theo giá thấp nhất của sản phẩm.</footer>
+  <footer>Mũi tên ▲▼ là số bậc tăng hoặc tụt so với lần cập nhật trước của cùng kỳ. "Tốp đầu đang giảm": lần trước ở hạng 1–5, nay tụt hạng (kể cả văng khỏi tốp 5) hoặc số bán giảm từ 10% trở lên. "Đang vươn lên": lần trước ở ngoài tốp 5, nay tăng từ 2 bậc trở lên (kể cả lọt vào tốp 5). Sản phẩm bùng nổ và tín hiệu không tính các ngày siêu sale (ngày đôi, Black Friday).<br>Số bán tính từ chênh lệch "đã bán" Shopee công bố giữa các ngày. Doanh thu là ước tính theo giá thấp nhất của sản phẩm.</footer>
 </div>
 
 <script>
@@ -159,13 +171,13 @@ function anToan(s) {
 }
 function ngayVN(iso) { if (!iso) return ""; const [y, m, d] = iso.split("-"); return `${d}/${m}/${y}`; }
 
-function dongSanPham(sp) {
+function dongSanPham(sp, cotPhai) {
   const duongDan = sp.duong_dan && /^https?:\/\//.test(sp.duong_dan) ? sp.duong_dan : "#";
   return `<a class="sp" href="${anToan(duongDan)}" target="_blank" rel="noopener">
     <img src="${anToan(sp.anh)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">
     <div><div class="ten">${anToan(sp.ten)}</div>
       <div class="phu">${anToan(sp.nhom)} · ${tienGon(sp.gia)}${sp.cua_hang ? " · " + anToan(sp.cua_hang) : ""}</div></div>
-    <div class="so-lieu"><b>${soVN(sp.so_ban)}</b><div class="phu">${tienGon(sp.doanh_thu)}</div></div>
+    <div class="so-lieu">${cotPhai || `<b>${soVN(sp.so_ban)}</b><div class="phu">${tienGon(sp.doanh_thu)}</div>`}</div>
   </a>`;
 }
 
@@ -189,6 +201,10 @@ function veTinHieu(ky) {
     hop.innerHTML = `<div class="rong">Cần thêm ít nhất 1 lần cập nhật nữa để so sánh thứ hạng.</div>`;
     return;
   }
+  if (ky.ly_do_bo_tin_hieu) {
+    hop.innerHTML = `<div class="ghi-chu-o">${anToan(ky.ly_do_bo_tin_hieu)}</div>`;
+    return;
+  }
   const len = ky.nhom.filter(n => n["tin_hieu_" + xepTheo] === "dang_vuon_len")
                     .sort((a, b) => b["thay_doi_hang_" + xepTheo] - a["thay_doi_hang_" + xepTheo]);
   const giam = ky.nhom.filter(n => n["tin_hieu_" + xepTheo] === "tot_dau_dang_giam")
@@ -201,15 +217,32 @@ function veTinHieu(ky) {
   </div>`;
 }
 
+function veBungNoVaQuangBa() {
+  const bn = duLieu.bung_no || {san_pham: []};
+  document.getElementById("bangBungNo").innerHTML = bn.san_pham.length
+    ? bn.san_pham.map(sp => dongSanPham(sp,
+        `<b>gấp ${sp.gap_lan.toLocaleString("vi-VN")} lần</b><div class="phu">${soVN(sp.so_ban)} sp/ngày · trước ${soVN(sp.trung_binh_truoc)}</div>`)).join("")
+    : `<div class="ghi-chu-o">${anToan(bn.ly_do_bo_qua || "Hôm nay chưa có sản phẩm nào bùng nổ.")}</div>`;
+
+  const qb = duLieu.nen_quang_ba || {san_pham: []};
+  document.getElementById("moTaQuangBa").textContent = qb.san_pham.length ? `hoa hồng ước tính cao nhất ${qb.so_ngay} ngày qua` : "";
+  document.getElementById("bangQuangBa").innerHTML = qb.san_pham.length
+    ? qb.san_pham.map(sp => dongSanPham(sp,
+        `<b>${tienGon(sp.hoa_hong_uoc_tinh)}</b><div class="phu">hoa hồng ${sp.hoa_hong.toLocaleString("vi-VN")}% · ${soVN(sp.so_ban)} sp</div>`)).join("")
+    : `<div class="ghi-chu-o">${anToan(qb.ly_do_bo_qua || "Chưa có dữ liệu.")}</div>`;
+}
+
 function veTrang() {
   const ky = duLieu.ky[kyDangChon];
 
   // Thông báo khi chưa đủ ngày dữ liệu
   let tb = "";
-  if (!ky.tu_ngay) tb = "Mới có ngày dữ liệu đầu tiên. Từ lần cập nhật sáng mai mới tính được số bán.";
+  if (duLieu.ngay_sale) tb += `<div class="thong-bao sale">Ngày ${ngayVN(duLieu.ngay)} là ${anToan(duLieu.ngay_sale)}: số bán cao bất thường, không nên so với ngày thường.</div>`;
+  (duLieu.sale_sap_toi || []).forEach(x => tb += `<div class="thong-bao sale">Sắp tới: ${anToan(x.ten)} ngày ${ngayVN(x.ngay)}. Nên chuẩn bị hàng và link quảng bá trước.</div>`);
+  if (!ky.tu_ngay) tb += `<div class="thong-bao">Mới có ngày dữ liệu đầu tiên. Từ lần cập nhật đêm tới mới tính được số bán.</div>`;
   else if (ky.so_ngay_co_du_lieu < ky.so_ngay_can)
-    tb = `Chưa đủ ${ky.so_ngay_can} ngày dữ liệu: đang tính trên ${ky.so_ngay_co_du_lieu} ngày (từ ${ngayVN(ky.tu_ngay)}). Số liệu sẽ đầy đủ sau khi chạy đủ ngày.`;
-  document.getElementById("thongBao").innerHTML = tb ? `<div class="thong-bao">${tb}</div>` : "";
+    tb += `<div class="thong-bao">Chưa đủ ${ky.so_ngay_can} ngày dữ liệu: đang tính trên ${ky.so_ngay_co_du_lieu} ngày (từ ${ngayVN(ky.tu_ngay)}). Số liệu sẽ đầy đủ sau khi chạy đủ ngày.</div>`;
+  document.getElementById("thongBao").innerHTML = tb;
 
   const nhom = [...ky.nhom].sort((a, b) => b[xepTheo] - a[xepTheo]);
   const tongBan = nhom.reduce((s, n) => s + n.so_ban, 0);
@@ -227,6 +260,8 @@ function veTrang() {
   veTinHieu(ky);
 
   const lonNhat = nhom.length ? nhom[0][xepTheo] || 1 : 1;
+  veBungNoVaQuangBa();
+
   document.getElementById("bangNhom").innerHTML = nhom.length ? nhom.map((n, i) => {
     let huyHieu = "";
     if (n.thay_doi_phan_tram !== null) {
@@ -242,7 +277,7 @@ function veTrang() {
           <div class="thanh"><i style="width:${(n[xepTheo] / lonNhat * 100).toFixed(1)}%"></i></div></div>
         <div class="so-lieu"><b>${chinh}</b><div class="phu">${phu}</div>${huyHieu}</div>
       </div>
-      <div class="chi-tiet" id="ct${i}">${n.top_san_pham.map(dongSanPham).join("") || '<div class="phu">Chưa có sản phẩm.</div>'}</div>`;
+      <div class="chi-tiet" id="ct${i}">${n.top_san_pham.map(sp => dongSanPham(sp)).join("") || '<div class="phu">Chưa có sản phẩm.</div>'}</div>`;
   }).join("") : `<div class="rong">Chưa có số liệu cho kỳ này.</div>`;
 
   document.querySelectorAll(".dong-nhom").forEach(d =>
@@ -250,7 +285,7 @@ function veTrang() {
 
   const sp = [...ky.top_san_pham].sort((a, b) => b[xepTheo] - a[xepTheo]);
   document.getElementById("moTaSp").textContent = ky.tu_ngay ? `từ ${ngayVN(ky.tu_ngay)} đến ${ngayVN(ky.den_ngay)}` : "";
-  document.getElementById("bangSp").innerHTML = sp.length ? sp.map(dongSanPham).join("")
+  document.getElementById("bangSp").innerHTML = sp.length ? sp.map(x => dongSanPham(x)).join("")
     : `<div class="rong">Chưa có số liệu cho kỳ này.</div>`;
 }
 
@@ -270,7 +305,7 @@ fetch("du_lieu/bang_xep_hang.json?t=" + Date.now())
   .then(d => {
     duLieu = d;
     document.getElementById("capNhat").textContent =
-      `Cập nhật lúc ${d.cap_nhat_luc} · đang theo dõi ${soVN(d.so_san_pham_theo_doi)} sản phẩm`;
+      `Số liệu tính đến hết ngày ${ngayVN(d.ngay)} · cập nhật lúc ${d.cap_nhat_luc} · đang theo dõi ${soVN(d.so_san_pham_theo_doi)} sản phẩm`;
     veTrang();
   })
   .catch(() => {

@@ -1,15 +1,20 @@
 # Hướng dẫn cài đặt – Nhóm hàng bán chạy Shopee
 
 ## Trang này làm gì
-- Mỗi sáng 6 giờ 47, máy của GitHub tự chạy, lấy sản phẩm bán chạy nhất của 20 nhóm hàng (80 từ khóa, mỗi từ khóa 100 sản phẩm) từ Shopee.
-- Xếp hạng nhóm hàng bán chạy nhất **hôm nay, 7 ngày qua, 30 ngày qua**, theo số lượng bán hoặc theo doanh thu ước tính.
-- So sánh với kỳ trước để biết nhóm nào đang tăng, nhóm nào đang giảm.
-- Gửi bảng xếp hạng về Telegram.
+- Mỗi đêm 0 giờ 13, máy của GitHub tự chạy, lấy sản phẩm bán chạy nhất của 20 nhóm hàng (80 từ khóa, mỗi từ khóa 100 sản phẩm) từ Shopee. Chạy lúc nửa đêm để mỗi ngày tính trọn từ 0 giờ đến 24 giờ.
+- **Rổ sản phẩm:** sản phẩm đã lọt top được theo dõi tiếp 30 ngày, kể cả khi rớt hạng, để số liệu nhóm không bị hụt.
+- Xếp hạng nhóm hàng **theo ngày, 7 ngày qua, 30 ngày qua**, theo số lượng bán hoặc doanh thu ước tính, có mũi tên tăng/tụt hạng.
+- **Tín hiệu:** nhóm ở tốp dưới đang vươn lên, nhóm ở tốp đầu đang giảm.
+- **Sản phẩm bùng nổ:** bán trong ngày gấp từ 3 lần trung bình các ngày trước.
+- **Nên quảng bá:** sản phẩm mang lại hoa hồng ước tính cao nhất 7 ngày qua, kèm link tiếp thị liên kết.
+- **Ngày siêu sale** (file `ngay_khuyen_mai.json`): không dùng để gắn tín hiệu và so sánh bùng nổ, tránh báo động giả.
+- Gửi tóm tắt về Telegram.
 
 ## Lưu ý quan trọng về số liệu
 Shopee chỉ công bố "tổng số đã bán từ trước tới nay" của mỗi sản phẩm. Chương trình phải chụp con số này mỗi ngày rồi lấy hiệu số. Vì vậy:
 - **Ngày đầu tiên:** chưa có số bán, chỉ mới chụp lần đầu.
 - **Từ ngày thứ 2:** có số bán trong ngày.
+- **Từ ngày thứ 3:** có mũi tên thứ hạng. **Từ ngày thứ 5:** bắt đầu xét sản phẩm bùng nổ.
 - **Đủ 7 ngày:** có số bán cả tuần. **Đủ 30 ngày:** có số bán cả tháng.
 - Muốn có phần "so với kỳ trước": ngày cần 3 ngày dữ liệu, tuần cần 15 ngày, tháng cần 61 ngày.
 - Trước khi đủ ngày, trang hiển thị dòng thông báo màu vàng, cho biết đang tính trên bao nhiêu ngày.
@@ -51,5 +56,6 @@ Sửa file `nhom_hang.json`. Mỗi nhóm có tên và danh sách từ khóa tìm
 | `index.html` | Trang web hiển thị |
 | `lay_du_lieu.py` | Chương trình lấy dữ liệu, tính xếp hạng, gửi Telegram |
 | `nhom_hang.json` | Danh sách nhóm hàng và từ khóa |
-| `.github/workflows/cap_nhat_hang_ngay.yml` | Lịch chạy tự động mỗi sáng |
+| `ngay_khuyen_mai.json` | Lịch ngày siêu sale (ngày đôi, Black Friday), sửa thêm bớt được |
+| `.github/workflows/cap_nhat_hang_ngay.yml` | Lịch chạy tự động mỗi đêm 0 giờ 13 |
 | `du_lieu/` | Nơi lưu ảnh chụp hằng ngày và bảng xếp hạng (máy tự ghi, không cần sửa) |

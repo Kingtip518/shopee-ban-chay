@@ -1,0 +1,109 @@
+{
+ "_ghi_chu": "Các ngày Shopee chạy khuyến mãi lớn, số bán cao bất thường. Chương trình không dùng các ngày này để gắn nhãn tín hiệu và không dùng làm mốc so sánh sản phẩm bùng nổ. Muốn thêm, bớt ngày thì sửa trực tiếp ở đây, ngày ghi theo dạng năm-tháng-ngày.",
+ "ngay_sale": [
+  {
+   "ngay": "2026-01-01",
+   "ten": "Sale ngày đôi 1.1"
+  },
+  {
+   "ngay": "2026-02-02",
+   "ten": "Sale ngày đôi 2.2"
+  },
+  {
+   "ngay": "2026-03-03",
+   "ten": "Sale ngày đôi 3.3"
+  },
+  {
+   "ngay": "2026-04-04",
+   "ten": "Sale ngày đôi 4.4"
+  },
+  {
+   "ngay": "2026-05-05",
+   "ten": "Sale ngày đôi 5.5"
+  },
+  {
+   "ngay": "2026-06-06",
+   "ten": "Sale ngày đôi 6.6"
+  },
+  {
+   "ngay": "2026-07-07",
+   "ten": "Sale ngày đôi 7.7"
+  },
+  {
+   "ngay": "2026-08-08",
+   "ten": "Sale ngày đôi 8.8"
+  },
+  {
+   "ngay": "2026-09-09",
+   "ten": "Siêu sale 9.9"
+  },
+  {
+   "ngay": "2026-10-10",
+   "ten": "Siêu sale 10.10"
+  },
+  {
+   "ngay": "2026-11-11",
+   "ten": "Siêu sale 11.11"
+  },
+  {
+   "ngay": "2026-11-27",
+   "ten": "Black Friday"
+  },
+  {
+   "ngay": "2026-12-12",
+   "ten": "Siêu sale 12.12"
+  },
+  {
+   "ngay": "2027-01-01",
+   "ten": "Sale ngày đôi 1.1"
+  },
+  {
+   "ngay": "2027-02-02",
+   "ten": "Sale ngày đôi 2.2"
+  },
+  {
+   "ngay": "2027-03-03",
+   "ten": "Sale ngày đôi 3.3"
+  },
+  {
+   "ngay": "2027-04-04",
+   "ten": "Sale ngày đôi 4.4"
+  },
+  {
+   "ngay": "2027-05-05",
+   "ten": "Sale ngày đôi 5.5"
+  },
+  {
+   "ngay": "2027-06-06",
+   "ten": "Sale ngày đôi 6.6"
+  },
+  {
+   "ngay": "2027-07-07",
+   "ten": "Sale ngày đôi 7.7"
+  },
+  {
+   "ngay": "2027-08-08",
+   "ten": "Sale ngày đôi 8.8"
+  },
+  {
+   "ngay": "2027-09-09",
+   "ten": "Siêu sale 9.9"
+  },
+  {
+   "ngay": "2027-10-10",
+   "ten": "Siêu sale 10.10"
+  },
+  {
+   "ngay": "2027-11-11",
+   "ten": "Siêu sale 11.11"
+  },
+  {
+   "ngay": "2027-11-26",
+   "ten": "Black Friday"
+  },
+  {
+   "ngay": "2027-12-12",
+   "ten": "Siêu sale 12.12"
+  }
+ ]
+}
