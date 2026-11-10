@@ -67,6 +67,20 @@
   .tang { background: var(--xanh-nhat); color: var(--xanh); }
   .giam { background: var(--do-nhat); color: var(--do); }
 
+  .cot-hang { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .mui-ten { font-size: 11px; font-weight: 700; line-height: 1; white-space: nowrap; }
+  .mui-ten.len { color: var(--xanh); } .mui-ten.xuong { color: var(--do); } .mui-ten.giu { color: var(--chu-phu); }
+  .nhan { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 1px 7px; border-radius: 6px; margin-left: 6px; vertical-align: 1px; }
+  .nhan.vuon-len { background: var(--xanh-nhat); color: var(--xanh); }
+  .nhan.dang-giam { background: var(--vang-nhat); color: var(--vang); }
+  .tin-hieu { display: grid; grid-template-columns: 1fr 1fr; }
+  .tin-hieu > div { padding: 12px 16px 14px; }
+  .tin-hieu > div + div { border-left: 1px solid var(--vien); }
+  .tin-hieu h3 { font-size: 14px; margin: 0 0 8px; }
+  .tin-hieu h3.len { color: var(--xanh); } .tin-hieu h3.xuong { color: var(--vang); }
+  .tin-hieu .muc { display: flex; justify-content: space-between; gap: 8px; padding: 5px 0; font-size: 14px; border-bottom: 1px dashed var(--vien); }
+  .tin-hieu .muc:last-child { border-bottom: 0; }
+  .tin-hieu .muc span:last-child { color: var(--chu-phu); white-space: nowrap; }
   .chi-tiet { display: none; padding: 4px 16px 12px 60px; border-bottom: 1px solid var(--vien); background: var(--nen); }
   .chi-tiet.mo { display: block; }
 
@@ -85,6 +99,8 @@
     .tom-tat { grid-template-columns: 1fr 1fr; }
     .tom-tat .o-so:last-child { grid-column: span 2; }
     .chi-tiet { padding-left: 16px; }
+    .tin-hieu { grid-template-columns: 1fr; }
+    .tin-hieu > div + div { border-left: 0; border-top: 1px solid var(--vien); }
     .nhom-nut button { padding: 7px 10px; }
   }
 </style>
@@ -112,6 +128,11 @@
   <div class="tom-tat" id="tomTat"></div>
 
   <section class="the">
+    <h2>Tín hiệu đáng chú ý <small id="moTaTinHieu"></small></h2>
+    <div id="tinHieu"></div>
+  </section>
+
+  <section class="the">
     <h2>Xếp hạng nhóm hàng <small>bấm vào nhóm để xem sản phẩm</small></h2>
     <div id="bangNhom"></div>
   </section>
@@ -121,7 +142,7 @@
     <div class="danh-sach-sp" id="bangSp"></div>
   </section>
 
-  <footer>Số bán tính từ chênh lệch "đã bán" Shopee công bố giữa các ngày. Doanh thu là ước tính theo giá thấp nhất của sản phẩm.</footer>
+  <footer>Mũi tên ▲▼ là số bậc tăng hoặc tụt so với lần cập nhật trước của cùng kỳ. "Tốp đầu đang giảm": lần trước ở hạng 1–5, nay tụt hạng (kể cả văng khỏi tốp 5) hoặc số bán giảm từ 10% trở lên. "Đang vươn lên": lần trước ở ngoài tốp 5, nay tăng từ 2 bậc trở lên (kể cả lọt vào tốp 5).<br>Số bán tính từ chênh lệch "đã bán" Shopee công bố giữa các ngày. Doanh thu là ước tính theo giá thấp nhất của sản phẩm.</footer>
 </div>
 
 <script>
@@ -148,6 +169,38 @@ function dongSanPham(sp) {
   </a>`;
 }
 
+function muiTen(n) {
+  const d = n["thay_doi_hang_" + xepTheo];
+  if (d === null || d === undefined) return "";
+  if (d > 0) return `<span class="mui-ten len" title="Tăng ${d} bậc so với lần cập nhật trước">▲${d}</span>`;
+  if (d < 0) return `<span class="mui-ten xuong" title="Tụt ${-d} bậc so với lần cập nhật trước">▼${-d}</span>`;
+  return `<span class="mui-ten giu" title="Giữ nguyên hạng">–</span>`;
+}
+function nhanTinHieu(n) {
+  const t = n["tin_hieu_" + xepTheo];
+  if (t === "dang_vuon_len") return `<span class="nhan vuon-len">Đang vươn lên</span>`;
+  if (t === "tot_dau_dang_giam") return `<span class="nhan dang-giam">Tốp đầu đang giảm</span>`;
+  return "";
+}
+function veTinHieu(ky) {
+  const hop = document.getElementById("tinHieu");
+  document.getElementById("moTaTinHieu").textContent = duLieu.ngay_lan_truoc ? `so với lần cập nhật ${ngayVN(duLieu.ngay_lan_truoc)}` : "";
+  if (!ky.co_so_sanh_hang) {
+    hop.innerHTML = `<div class="rong">Cần thêm ít nhất 1 lần cập nhật nữa để so sánh thứ hạng.</div>`;
+    return;
+  }
+  const len = ky.nhom.filter(n => n["tin_hieu_" + xepTheo] === "dang_vuon_len")
+                    .sort((a, b) => b["thay_doi_hang_" + xepTheo] - a["thay_doi_hang_" + xepTheo]);
+  const giam = ky.nhom.filter(n => n["tin_hieu_" + xepTheo] === "tot_dau_dang_giam")
+                     .sort((a, b) => a["hang_" + xepTheo] - b["hang_" + xepTheo]);
+  const dong = n => `<div class="muc"><span>${anToan(n.ten)}</span><span>hạng ${n["hang_truoc_" + xepTheo]} → ${n["hang_" + xepTheo]}${
+      n.thay_doi_phan_tram !== null ? ` · số bán ${n.thay_doi_phan_tram >= 0 ? "+" : ""}${n.thay_doi_phan_tram.toLocaleString("vi-VN")}%` : ""}</span></div>`;
+  hop.innerHTML = `<div class="tin-hieu">
+    <div><h3 class="len">▲ Ở tốp dưới nhưng đang vươn lên</h3>${len.map(dong).join("") || '<div class="phu">Chưa có nhóm nào.</div>'}</div>
+    <div><h3 class="xuong">▼ Ở tốp đầu nhưng đang giảm</h3>${giam.map(dong).join("") || '<div class="phu">Chưa có nhóm nào.</div>'}</div>
+  </div>`;
+}
+
 function veTrang() {
   const ky = duLieu.ky[kyDangChon];
 
@@ -171,6 +224,8 @@ function veTrang() {
       tang ? anToan(tang.ten) + ` <span class="huy-hieu ${tang.thay_doi_phan_tram >= 0 ? "tang" : "giam"}">${tang.thay_doi_phan_tram >= 0 ? "▲" : "▼"} ${Math.abs(tang.thay_doi_phan_tram).toLocaleString("vi-VN")}%</span>` : "Chưa đủ dữ liệu"
     }</div></div>`;
 
+  veTinHieu(ky);
+
   const lonNhat = nhom.length ? nhom[0][xepTheo] || 1 : 1;
   document.getElementById("bangNhom").innerHTML = nhom.length ? nhom.map((n, i) => {
     let huyHieu = "";
@@ -181,8 +236,8 @@ function veTrang() {
     const chinh = xepTheo === "so_ban" ? soVN(n.so_ban) + " sp" : tienGon(n.doanh_thu);
     const phu = xepTheo === "so_ban" ? tienGon(n.doanh_thu) : soVN(n.so_ban) + " sp";
     return `<div class="dong-nhom" data-i="${i}">
-        <div class="hang ${i < 3 ? "top" : ""}">${i + 1}</div>
-        <div><div class="ten-nhom">${anToan(n.ten)}</div>
+        <div class="cot-hang"><div class="hang ${i < 3 ? "top" : ""}">${i + 1}</div>${muiTen(n)}</div>
+        <div><div class="ten-nhom">${anToan(n.ten)}${nhanTinHieu(n)}</div>
           <div class="phu">${n.ty_trong.toLocaleString("vi-VN")}% tổng số bán · ${n.so_san_pham} sản phẩm có bán</div>
           <div class="thanh"><i style="width:${(n[xepTheo] / lonNhat * 100).toFixed(1)}%"></i></div></div>
         <div class="so-lieu"><b>${chinh}</b><div class="phu">${phu}</div>${huyHieu}</div>

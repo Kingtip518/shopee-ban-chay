@@ -265,9 +265,14 @@ def tinh_mot_ky(ky: dict, hom_nay: date, anh_chup: dict, thong_tin: dict) -> dic
         del n["_sp"]
         danh_sach_nhom.append(n)
 
+    # Thứ hạng theo doanh thu
+    for i, n in enumerate(sorted(danh_sach_nhom, key=lambda x: x["doanh_thu"], reverse=True), 1):
+        n["hang_doanh_thu"] = i
+    # Thứ hạng theo số lượng bán (thứ tự mặc định)
     danh_sach_nhom.sort(key=lambda x: x["so_ban"], reverse=True)
     for i, n in enumerate(danh_sach_nhom, 1):
         n["hang"] = i
+        n["hang_so_ban"] = i
     ket_qua["nhom"] = danh_sach_nhom
 
     hang_dau = sorted(ban_ky_nay.items(), key=lambda x: x[1], reverse=True)[:SO_SAN_PHAM_HANG_DAU]
@@ -275,14 +280,61 @@ def tinh_mot_ky(ky: dict, hom_nay: date, anh_chup: dict, thong_tin: dict) -> dic
     return ket_qua
 
 
+TOP_DAU = 5                    # nhóm đứng hạng 1–5 được coi là "tốp đầu"
+SO_BAC_TANG_DANG_KE = 2        # nhóm từ ngoài tốp đầu tăng từ 2 bậc trở lên thì gắn nhãn "đang vươn lên"
+PHAN_TRAM_GIAM_DANG_KE = 10    # nhóm tốp đầu có số bán giảm từ 10% trở lên so với kỳ trước thì coi là đang giảm
+
+
+def gan_thay_doi_thu_hang(ky_nay: dict, ky_lan_truoc: dict):
+    """So thứ hạng của cùng một kỳ giữa lần cập nhật này và lần cập nhật trước, rồi gắn nhãn tín hiệu.
+    thay_doi_hang > 0: tăng hạng (ví dụ từ hạng 8 lên hạng 5 là +3); < 0: tụt hạng."""
+    truoc = {n["ten"]: n for n in (ky_lan_truoc or {}).get("nhom", [])}
+    ky_nay["co_so_sanh_hang"] = bool(truoc)
+    for n in ky_nay["nhom"]:
+        cu = truoc.get(n["ten"])
+        for kieu in ("so_ban", "doanh_thu"):
+            hang_nay = n[f"hang_{kieu}"]
+            hang_cu = cu[f"hang_{kieu}"] if cu else None
+            n[f"hang_truoc_{kieu}"] = hang_cu
+            n[f"thay_doi_hang_{kieu}"] = (hang_cu - hang_nay) if hang_cu else None
+            # Nhãn tín hiệu
+            nhan = None
+            if hang_cu:
+                thay_doi = hang_cu - hang_nay
+                so_ban_giam_manh = (n["thay_doi_phan_tram"] is not None
+                                    and n["thay_doi_phan_tram"] <= -PHAN_TRAM_GIAM_DANG_KE)
+                # Tốp đầu đang giảm: lần trước đang ở tốp đầu, nay tụt hạng (kể cả văng khỏi tốp đầu)
+                #                    hoặc vẫn ở tốp đầu nhưng số bán giảm mạnh
+                if hang_cu <= TOP_DAU and (thay_doi < 0 or so_ban_giam_manh):
+                    nhan = "tot_dau_dang_giam"
+                # Đang vươn lên: lần trước ở ngoài tốp đầu, nay tăng từ 2 bậc trở lên (kể cả lọt vào tốp đầu)
+                elif hang_cu > TOP_DAU and thay_doi >= SO_BAC_TANG_DANG_KE:
+                    nhan = "dang_vuon_len"
+            n[f"tin_hieu_{kieu}"] = nhan
+
+
 def tinh_xep_hang(hom_nay: date):
     anh_chup = doc_tat_ca_anh_chup()
     thong_tin = doc_json(FILE_SAN_PHAM, {})
+
+    # Lần cập nhật trước = lần chụp gần nhất trước hôm nay
+    cac_ngay_truoc = [n for n in anh_chup if n < hom_nay]
+    ngay_lan_truoc = max(cac_ngay_truoc) if cac_ngay_truoc else None
+    anh_chup_lan_truoc = {n: v for n, v in anh_chup.items() if n <= ngay_lan_truoc} if ngay_lan_truoc else {}
+
+    cac_ky = {}
+    for ky in CAC_KY:
+        ky_nay = tinh_mot_ky(ky, hom_nay, anh_chup, thong_tin)
+        ky_lan_truoc = tinh_mot_ky(ky, ngay_lan_truoc, anh_chup_lan_truoc, thong_tin) if ngay_lan_truoc else None
+        gan_thay_doi_thu_hang(ky_nay, ky_lan_truoc)
+        cac_ky[ky["ma"]] = ky_nay
+
     bang = {
         "cap_nhat_luc": datetime.now(GIO_VIET_NAM).strftime("%H:%M ngày %d/%m/%Y"),
         "ngay": hom_nay.isoformat(),
+        "ngay_lan_truoc": ngay_lan_truoc.isoformat() if ngay_lan_truoc else None,
         "so_san_pham_theo_doi": len(anh_chup.get(hom_nay, {})),
-        "ky": {ky["ma"]: tinh_mot_ky(ky, hom_nay, anh_chup, thong_tin) for ky in CAC_KY},
+        "ky": cac_ky,
     }
     ghi_json(FILE_XEP_HANG, bang)
     return bang
@@ -306,11 +358,33 @@ def gui_telegram(bang: dict):
         dong.append("Mới có ngày dữ liệu đầu tiên. Từ ngày mai mới tính được số bán trong ngày.")
     else:
         for n in ky["nhom"][:10]:
-            thay_doi = ""
-            if n["thay_doi_phan_tram"] is not None:
-                dau = "▲" if n["thay_doi_phan_tram"] >= 0 else "▼"
-                thay_doi = f" {dau}{abs(n['thay_doi_phan_tram'])}%"
-            dong.append(f"{n['hang']}. {n['ten']}: {dinh_dang_so(n['so_ban'])} sp{thay_doi}")
+            doi_hang = n.get("thay_doi_hang_so_ban")
+            if doi_hang is None:
+                mui_ten = ""
+            elif doi_hang > 0:
+                mui_ten = f" (⬆{doi_hang} bậc)"
+            elif doi_hang < 0:
+                mui_ten = f" (⬇{-doi_hang} bậc)"
+            else:
+                mui_ten = " (giữ hạng)"
+            dong.append(f"{n['hang']}. {n['ten']}: {dinh_dang_so(n['so_ban'])} sp{mui_ten}")
+
+    # Tín hiệu đáng chú ý theo 7 ngày qua (ổn định hơn theo ngày)
+    for ma_ky in ("tuan", "ngay"):
+        k = bang["ky"][ma_ky]
+        len_ = [n for n in k["nhom"] if n.get("tin_hieu_so_ban") == "dang_vuon_len"]
+        giam = [n for n in k["nhom"] if n.get("tin_hieu_so_ban") == "tot_dau_dang_giam"]
+        if len_ or giam:
+            dong.append("")
+            dong.append(f"<b>Tín hiệu ({k['ten'].lower()})</b>")
+            for n in len_:
+                dong.append(f"🟢 Đang vươn lên: {n['ten']} (hạng {n['hang_truoc_so_ban']} → {n['hang']})")
+            for n in giam:
+                phan_tram = (f", số bán {n['thay_doi_phan_tram']:+}%".replace(".", ",")
+                             if n["thay_doi_phan_tram"] is not None else "")
+                dong.append(f"🟠 Tốp đầu đang giảm: {n['ten']} (hạng {n['hang_truoc_so_ban']} → {n['hang']}{phan_tram})")
+            break
+    if ky["nhom"]:
         dong.append("")
         dong.append("<b>5 sản phẩm bán nhiều nhất hôm nay</b>")
         for i, sp in enumerate(ky["top_san_pham"][:5], 1):
