@@ -4,7 +4,7 @@ name: Cập nhật bán chạy Shopee hằng ngày
 
 on:
   schedule:
-    - cron: "47 23 * * *"   # 23:47 giờ quốc tế = 6:47 sáng giờ Việt Nam
+  - cron: "13 17 * * *"   # 17:13 giờ quốc tế = 0 giờ 13 đêm giờ Việt Nam
   workflow_dispatch:        # cho phép bấm nút chạy tay trong mục Actions
 
 permissions:
