@@ -37,6 +37,8 @@ from pathlib import Path
 
 import requests
 
+from phan_tich import phan_tich_toan_bo
+
 # ======================= THÔNG SỐ (sửa số ở đây nếu muốn) =======================
 SO_SAN_PHAM_MOI_TRANG = 50          # mỗi lần hỏi Shopee lấy 50 sản phẩm
 SO_TRANG_MOI_TU_KHOA = 2            # mỗi từ khóa lấy 2 trang = 100 sản phẩm bán chạy nhất
@@ -142,9 +144,11 @@ def doc_json(duong_dan: Path, mac_dinh):
     return mac_dinh
 
 
-def ghi_json(duong_dan: Path, du_lieu):
+def ghi_json(duong_dan: Path, du_lieu, gon: bool = False):
     duong_dan.parent.mkdir(parents=True, exist_ok=True)
-    duong_dan.write_text(json.dumps(du_lieu, ensure_ascii=False, indent=1), encoding="utf-8")
+    noi_dung = (json.dumps(du_lieu, ensure_ascii=False, separators=(",", ":")) if gon
+                else json.dumps(du_lieu, ensure_ascii=False, indent=1))
+    duong_dan.write_text(noi_dung, encoding="utf-8")
 
 
 def doc_tat_ca_anh_chup() -> dict:
@@ -179,7 +183,7 @@ def doi_ty_le_hoa_hong(gia_tri):
 
 
 # ======================= BƯỚC 1: THU THẬP =======================
-def ghi_nhan_san_pham(sp: dict, ten_nhom: str, thong_tin: dict, ngay: date, vao_top: bool) -> tuple:
+def ghi_nhan_san_pham(sp: dict, ten_nhom: str, thong_tin: dict, ngay: date, vao_top: bool, tu_khoa: str = "") -> tuple:
     ma = str(sp["itemId"])
     cu = thong_tin.get(ma, {})
     hoa_hong = doi_ty_le_hoa_hong(sp.get("commissionRate"))
@@ -192,6 +196,7 @@ def ghi_nhan_san_pham(sp: dict, ten_nhom: str, thong_tin: dict, ngay: date, vao_
         "cua_hang": sp.get("shopName", "") or cu.get("cua_hang", ""),
         # Sản phẩm giữ nhóm được gán lần đầu, tránh nhảy nhóm khi nằm trong nhiều từ khóa
         "nhom": cu.get("nhom", ten_nhom),
+        "tu_khoa": cu.get("tu_khoa", tu_khoa),   # loại hàng (từ khóa tìm thấy lần đầu)
         "hoa_hong": hoa_hong if hoa_hong is not None else cu.get("hoa_hong"),
         "lan_cuoi_vao_top": ngay.isoformat() if vao_top else cu.get("lan_cuoi_vao_top", ngay.isoformat()),
         "lan_cuoi_thay": ngay.isoformat(),
@@ -216,7 +221,7 @@ def thu_thap(ngay: date, ham_theo_tu_khoa=lay_theo_tu_khoa, ham_theo_ma=lay_theo
                     print(f"  Lỗi khi lấy '{tu_khoa}' trang {trang}: {loi}")
                     break
                 for sp in danh_sach:
-                    ma, so = ghi_nhan_san_pham(sp, nhom["ten"], thong_tin, ngay, vao_top=True)
+                    ma, so = ghi_nhan_san_pham(sp, nhom["ten"], thong_tin, ngay, vao_top=True, tu_khoa=tu_khoa)
                     da_ban[ma] = so
                 print(f"  {nhom['ten']} | {tu_khoa} | trang {trang}: {len(danh_sach)} sản phẩm")
                 if len(danh_sach) < SO_SAN_PHAM_MOI_TRANG:
@@ -484,7 +489,18 @@ def tinh_xep_hang(ngay: date):
         "bung_no": tinh_bung_no(ngay, anh_chup, thong_tin, ngay_sale),
         "nen_quang_ba": nen_quang_ba,
     }
-    ghi_json(FILE_XEP_HANG, bang)
+
+    # Phân tích, định hướng, lời khuyên cho từng nhóm và từng sản phẩm có trên trang
+    ma_can = set()
+    for ky in cac_ky.values():
+        ma_can.update(s["ma"] for s in ky["top_san_pham"])
+        for n in ky["nhom"]:
+            ma_can.update(s["ma"] for s in n["top_san_pham"])
+    ma_can.update(s["ma"] for s in bang["bung_no"]["san_pham"])
+    ma_can.update(s["ma"] for s in nen_quang_ba["san_pham"])
+    bang["phan_tich"] = phan_tich_toan_bo(ngay, anh_chup, thong_tin, ngay_sale, ma_can)
+
+    ghi_json(FILE_XEP_HANG, bang, gon=True)
     return bang
 
 

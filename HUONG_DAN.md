@@ -8,6 +8,7 @@
 - **Sản phẩm bùng nổ:** bán trong ngày gấp từ 3 lần trung bình các ngày trước.
 - **Nên quảng bá:** sản phẩm mang lại hoa hồng ước tính cao nhất 7 ngày qua, kèm link tiếp thị liên kết.
 - **Ngày siêu sale** (file `ngay_khuyen_mai.json`): không dùng để gắn tín hiệu và so sánh bùng nổ, tránh báo động giả.
+- **Bảng phân tích:** bấm vào nhóm hàng hoặc sản phẩm để xem giai đoạn, biểu đồ 30 ngày, độ cạnh tranh, khoảng giá, phân tích từng loại hàng trong nhóm, và lời khuyên cho người bán, người làm tiếp thị liên kết.
 - Gửi tóm tắt về Telegram.
 
 ## Lưu ý quan trọng về số liệu
@@ -55,6 +56,7 @@ Sửa file `nhom_hang.json`. Mỗi nhóm có tên và danh sách từ khóa tìm
 |---|---|
 | `index.html` | Trang web hiển thị |
 | `lay_du_lieu.py` | Chương trình lấy dữ liệu, tính xếp hạng, gửi Telegram |
+| `phan_tich.py` | Phân tích giai đoạn, độ cạnh tranh, khoảng giá và viết lời khuyên cho từng nhóm, từng loại hàng, từng sản phẩm |
 | `nhom_hang.json` | Danh sách nhóm hàng và từ khóa |
 | `ngay_khuyen_mai.json` | Lịch ngày siêu sale (ngày đôi, Black Friday), sửa thêm bớt được |
 | `.github/workflows/cap_nhat_hang_ngay.yml` | Lịch chạy tự động mỗi đêm 0 giờ 13 |
