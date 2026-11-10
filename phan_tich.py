@@ -11,6 +11,7 @@ Từ các ảnh chụp "tổng đã bán" mỗi ngày, tính ra:
 Ngày siêu sale không được dùng để tính giai đoạn (số bán ngày đó cao bất thường).
 """
 
+import re
 from datetime import date, timedelta
 
 # ======================= THÔNG SỐ (sửa số ở đây nếu muốn) =======================
@@ -30,6 +31,7 @@ CANH_TRANH_CAO = 60           # 3 shop đầu chiếm từ 60% trở lên → c�
 CANH_TRANH_THAP = 35          # 3 shop đầu chiếm dưới 35% → cạnh tranh thấp (nhiều shop cùng chia, dễ chen chân)
 
 SO_NGAY_NHAC_SALE = 21
+SO_SP_MOI_LOAI = 6               # mỗi loại hàng lưu 6 sản phẩm bán chạy nhất (hiện khi tìm kiếm)
 
 # Gian hàng uy tín cho từng ngành (để gắn link tiếp thị liên kết)
 SO_GIAN_HANG_MOI_NGANH = 5      # mỗi ngành hiện 5 gian hàng uy tín nhất
@@ -297,6 +299,14 @@ def tinh_gian_hang_uy_tin(ban_theo_sp: dict, thong_tin: dict) -> list:
     return ket_qua[:SO_GIAN_HANG_MOI_NGANH]
 
 
+def mo_ta_gon(ma: str, so_ban_7_ngay: float, thong_tin: dict) -> dict:
+    tt = thong_tin.get(ma, {})
+    return {"ma": ma, "ten": tt.get("ten", ""), "nhom": tt.get("nhom", ""), "loai": tt.get("tu_khoa", ""),
+            "gia": tt.get("gia", 0), "danh_gia": tt.get("danh_gia", 0), "anh": tt.get("anh", ""),
+            "duong_dan": tt.get("duong_dan", ""), "cua_hang": tt.get("cua_hang", ""), "hoa_hong": tt.get("hoa_hong"),
+            "so_ban": round(so_ban_7_ngay), "doanh_thu": round(so_ban_7_ngay * (tt.get("gia") or 0))}
+
+
 def ket_luan_ngan(gd: dict, ct: dict) -> str:
     """Một câu kết luận nhanh cho từng loại hàng trong nhóm."""
     ma, muc = gd["ma"], ct.get("muc")
@@ -380,10 +390,20 @@ def phan_tich_toan_bo(ngay: date, anh_chup: dict, thong_tin: dict, ngay_sale: di
         ban7 = ban_7_theo_loai.get((nhom, tu_khoa), {})
         gd = tinh_giai_doan(chuoi, ngay_sale)
         ct = tinh_canh_tranh(ban7, thong_tin)
+        gia = tinh_khoang_gia(ban7, thong_tin)
+        # Lời khuyên riêng cho loại hàng (dùng chung cách viết với nhóm, đổi chữ "nhóm" thành "loại hàng")
+        lk = loi_khuyen_nhom(tu_khoa, gd, ct, gia, sale, [])
+        doi_chu = lambda x: re.sub(r"\bnhóm\b", "loại hàng", re.sub(r"\bNhóm\b", "Loại hàng này", x))
+        lk = {k: [doi_chu(x) for x in v] for k, v in lk.items()}
+        # Sản phẩm bán chạy nhất của loại hàng (để hiện khi tìm kiếm loại hàng)
+        sp_dau = sorted(ban7.items(), key=lambda x: x[1], reverse=True)[:SO_SP_MOI_LOAI]
+        ma_can_phan_tich.update(ma for ma, _ in sp_dau)
         nhom_kq[nhom].setdefault("theo_loai", []).append({
             "ten": tu_khoa, "giai_doan": {**gd, **GIAI_DOAN[gd["ma"]]}, "canh_tranh": ct,
-            "khoang_gia": tinh_khoang_gia(ban7, thong_tin), "ban_7_ngay": round(sum(ban7.values())),
-            "ket_luan": ket_luan_ngan(gd, ct),
+            "khoang_gia": gia, "ban_7_ngay": round(sum(ban7.values())),
+            "ket_luan": ket_luan_ngan(gd, ct), "loi_khuyen": lk,
+            "bieu_do": dang_bieu_do(du_lieu),
+            "san_pham": [mo_ta_gon(ma, sb, thong_tin) for ma, sb in sp_dau if sb > 0],
         })
     for v in nhom_kq.values():
         v.setdefault("theo_loai", []).sort(key=lambda x: x["ban_7_ngay"], reverse=True)

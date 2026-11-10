@@ -303,7 +303,7 @@ def mo_ta_san_pham(ma: str, so_ban: int, thong_tin: dict) -> dict:
     gia = tt.get("gia", 0)
     hoa_hong = tt.get("hoa_hong")
     return {
-        "ma": ma, "ten": tt.get("ten", ""), "nhom": tt.get("nhom", ""),
+        "ma": ma, "ten": tt.get("ten", ""), "nhom": tt.get("nhom", ""), "loai": tt.get("tu_khoa", ""),
         "gia": gia, "danh_gia": tt.get("danh_gia", 0), "anh": tt.get("anh", ""),
         "duong_dan": tt.get("duong_dan", ""), "cua_hang": tt.get("cua_hang", ""),
         "so_ban": so_ban, "doanh_thu": round(so_ban * gia),

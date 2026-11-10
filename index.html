@@ -38,6 +38,33 @@
   .chon button { border: 0; background: none; padding: 6px 14px; border-radius: 999px; cursor: pointer; color: var(--phu); font-weight: 600; font-size: 14px; }
   .chon button[aria-pressed="true"] { background: var(--muc); color: #fff; }
 
+  /* ================= TÌM KIẾM ================= */
+  .tim { position: relative; flex: 1 1 280px; max-width: 440px; }
+  .tim input { width: 100%; border: 1.5px solid var(--vien); background: var(--xam-nhat); border-radius: 999px; padding: 9px 40px 9px 40px;
+               font: inherit; font-size: 14.5px; color: var(--muc); outline: none; }
+  .tim input:focus { border-color: var(--tim); background: #fff; box-shadow: 0 0 0 4px rgba(106, 76, 255, .14); }
+  .tim .kinh { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--phu); }
+  .tim .phim { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--phu); border: 1px solid var(--vien); border-radius: 6px; padding: 0 6px; background: #fff; }
+  .tim input:focus + .phim, .tim input:not(:placeholder-shown) + .phim { display: none; }
+  .kq-tim { position: absolute; left: 0; right: 0; top: calc(100% + 8px); background: #fff; border: 1px solid var(--vien); border-radius: 18px;
+            box-shadow: 0 24px 60px -20px rgba(29, 31, 51, .35); max-height: min(70vh, 560px); overflow-y: auto; padding: 6px; display: none; z-index: 20; min-width: 340px; }
+  .kq-tim.mo { display: block; }
+  .kq-tim h4 { margin: 8px 10px 4px; font-size: 12.5px; font-weight: 700; color: var(--phu); display: flex; justify-content: space-between; }
+  .kq { all: unset; box-sizing: border-box; width: 100%; display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 12px; cursor: pointer; }
+  .kq:hover, .kq.dang-chon { background: #f4f1ff; }
+  .kq .o-bt { width: 40px; height: 40px; font-size: 19px; border-radius: 12px; }
+  .kq img { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; }
+  .kq .ten-kq { font-weight: 700; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .kq .ten-kq mark { background: #fff1b8; color: inherit; border-radius: 3px; padding: 0 1px; }
+  .kq .phu-kq { font-size: 12.5px; color: var(--phu); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .kq .hang-kq { text-align: right; white-space: nowrap; }
+  .hang-so { display: inline-block; font-weight: 900; font-size: 15px; padding: 2px 9px; border-radius: 999px; background: var(--xam-nhat); }
+  .hang-so.h1 { background: linear-gradient(135deg, #ffe48a, #ffc531); color: #6b4300; }
+  .hang-so.h2 { background: linear-gradient(135deg, #f0f2f8, #c9cfe0); color: #2d3450; }
+  .hang-so.h3 { background: linear-gradient(135deg, #ffd9bf, #e2915c); color: #4a1f00; }
+  .hang-kq .phu { display: block; font-size: 11.5px; margin-top: 2px; }
+  .kq-rong { padding: 18px 12px; color: var(--phu); font-size: 14px; text-align: center; }
+
   /* ================= BĂNG RÔN ĐẦU TRANG ================= */
   .bang-ron { position: relative; overflow: hidden; color: #fff; background: linear-gradient(115deg, #ff6a1f 0%, #f23d79 46%, #6a4cff 100%); }
   .bang-ron::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5;
@@ -216,6 +243,7 @@
   .bang-loai th { text-align: left; color: var(--phu); font-weight: 600; font-size: 12.5px; padding: 0 8px 8px 0; border-bottom: 1px solid var(--vien); }
   .bang-loai td { padding: 9px 8px 9px 0; border-bottom: 1px dashed var(--vien); vertical-align: top; }
   .bang-loai tr:last-child td { border-bottom: 0; }
+  .bang-loai tbody tr:hover td { background: #faf8ff; }
   .nut-chinh { display: block; text-align: center; background: linear-gradient(120deg, #ff6a1f, #ff3d5c); color: #fff; text-decoration: none; font-weight: 800; padding: 13px; border-radius: 14px; box-shadow: 0 12px 24px -12px rgba(255, 61, 92, .7); }
   .nut-phu { justify-self: start; border: 1px solid var(--vien); background: var(--mat); padding: 9px 14px; border-radius: 999px; cursor: pointer; font-size: 14px; font-weight: 600; }
   .shop-dau { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 14px; padding: 6px 0; }
@@ -255,6 +283,8 @@
   @media (max-width: 640px) {
     .thanh-tren .trong { padding: 10px 16px; gap: 8px; }
     .hieu { width: 100%; }
+    .tim { flex-basis: 100%; max-width: none; order: 3; }
+    .kq-tim { min-width: 0; }
     .chon button { padding: 6px 11px; }
     .bang-ron .trong { padding: 22px 16px 52px; }
     .khung { padding: 0 12px 48px; }
@@ -286,6 +316,12 @@
         </svg>
       </div>
       <div><b>Radar Hàng Bán Chạy</b><span class="phu" id="capNhat">Đang tải số liệu…</span></div>
+    </div>
+    <div class="tim" role="search">
+      <svg class="kinh" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="oTim" type="search" placeholder="Tìm ngành hàng, loại hàng, sản phẩm…" autocomplete="off" aria-label="Tìm kiếm" aria-controls="kqTim" aria-expanded="false">
+      <span class="phim" aria-hidden="true">/</span>
+      <div class="kq-tim" id="kqTim" role="listbox"></div>
     </div>
     <div class="chon" id="chonKy" role="group" aria-label="Kỳ thống kê">
       <button data-ky="ngay" aria-pressed="true">Theo ngày</button>
@@ -414,7 +450,7 @@ function veBanTin() {
   }
   document.getElementById("daiLen").innerHTML = coHoi.slice(1, 7).map(l => {
     const [bt, m] = nganh(l.nhom);
-    return `<button class="the-len" data-nhom="${anToan(l.nhom)}"><span class="bt" style="background:color-mix(in srgb, ${m} 16%, #fff)">${bt}</span>${anToan(vietHoa(l.ten))} <b>${phanTram(l.giai_doan.tang_tuan)}</b></button>`;
+    return `<button class="the-len" data-loai="${anToan(l.ten)}" data-trong="${anToan(l.nhom)}"><span class="bt" style="background:color-mix(in srgb, ${m} 16%, #fff)">${bt}</span>${anToan(vietHoa(l.ten))} <b>${phanTram(l.giai_doan.tang_tuan)}</b></button>`;
   }).join("");
 
   const top3 = Object.entries(pt().nhom).filter(([, v]) => v.giai_doan.tang_tuan !== null && v.giai_doan.tang_tuan > 0)
@@ -619,7 +655,7 @@ function moPhanTichNhom(ten) {
   const p = pt().nhom[ten], ky = duLieu.ky[kyDangChon], nk = ky.nhom.find(n => n.ten === ten), [bt, m] = nganh(ten);
   if (!p) { moBang(`<div class="pt-dau">${oBt(ten)}<div><h2>${anToan(ten)}</h2></div>${nutDong()}</div><div class="pt-than"><div class="pt-khoi">Chưa có số liệu phân tích cho ngành này.</div></div>`); return; }
   const gd = p.giai_doan, ct = p.canh_tranh, gia = p.khoang_gia;
-  const loai = (p.theo_loai || []).map(l => `<tr>
+  const loai = (p.theo_loai || []).map(l => `<tr data-loai="${anToan(l.ten)}" data-trong="${anToan(ten)}" style="cursor:pointer">
       <td><b>${anToan(vietHoa(l.ten))}</b><div class="phu">${soVN(l.ban_7_ngay)} sp / 7 ngày</div></td>
       <td>${chip(l.giai_doan)}<div class="phu">${phanTram(l.giai_doan.tang_tuan)}</div></td>
       <td class="an-dt">${chipCt(l.canh_tranh)}</td>
@@ -651,7 +687,7 @@ function moPhanTichSp(ma) {
   const lienKet = sp.duong_dan && /^https?:\/\//.test(sp.duong_dan) ? sp.duong_dan : null;
   const ketLuan = p && p.loi_khuyen.nguoi_ban[0];
   moBang(`<div class="pt-dau">${sp.anh ? `<img src="${anToan(sp.anh)}" alt="" referrerpolicy="no-referrer" onerror="this.style.visibility='hidden'">` : oBt(sp.nhom)}
-      <div style="min-width:0"><h2 style="font-size:18px">${anToan(sp.ten)}</h2><div class="ds-chip">${chip(gd)}<span class="chip xam">${bt} ${anToan(sp.nhom)}</span></div></div>${nutDong()}</div>
+      <div style="min-width:0"><h2 style="font-size:18px">${anToan(sp.ten)}</h2><div class="ds-chip">${chip(gd)}${(h => h ? `<span class="chip xam">#${h.nganh} trong ${anToan(sp.nhom)}</span><span class="chip xam">#${h.chung} / ${h.tongChung} sản phẩm</span>` : `<span class="chip xam">${bt} ${anToan(sp.nhom)}</span>`)(hangSp(ma))}</div></div>${nutDong()}</div>
     <div class="pt-than">
       ${ketLuan ? `<div class="ket-luan"><span class="phu">Kết luận</span><b>${anToan(ketLuan)}</b></div>` : ""}
       ${lienKet ? `<a class="nut-chinh" href="${anToan(lienKet)}" target="_blank" rel="noopener">🛒 Mở sản phẩm trên Shopee</a>` : ""}
@@ -665,7 +701,139 @@ function moPhanTichSp(ma) {
       </div>
       <div class="pt-khoi bieu-do"><h3>📊 Số bán theo ngày</h3>${bieuDo(p && p.bieu_do, m)}</div>
       ${khoiLoiKhuyen(p && p.loi_khuyen)}
-      ${sp.nhom ? `<button class="nut-phu" data-nhom="${anToan(sp.nhom)}">${bt} Xem phân tích ngành ${anToan(sp.nhom)}</button>` : ""}
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${sp.loai && (pt().nhom[sp.nhom]?.theo_loai || []).some(l => l.ten === sp.loai) ? `<button class="nut-phu" data-loai="${anToan(sp.loai)}" data-trong="${anToan(sp.nhom)}">Xem loại hàng ${anToan(sp.loai)}</button>` : ""}
+        ${sp.nhom ? `<button class="nut-phu" data-nhom="${anToan(sp.nhom)}">${bt} Xem ngành ${anToan(sp.nhom)}</button>` : ""}
+      </div>
+    </div>`);
+}
+
+// ---------- Tìm kiếm ----------
+const boDau = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D").toLowerCase().trim();
+function toSang(ten, tu) {   // tô vàng phần chữ khớp
+  const a = boDau(ten), b = boDau(tu), i = a.indexOf(b);
+  if (!b || i < 0) return anToan(ten);
+  return anToan(ten.slice(0, i)) + "<mark>" + anToan(ten.slice(i, i + b.length)) + "</mark>" + anToan(ten.slice(i + b.length));
+}
+// Gom mọi sản phẩm có trong số liệu (mọi kỳ, bùng nổ, nên quảng bá, từng loại hàng)
+function gomSanPham() {
+  Object.values(duLieu.ky).forEach(k => { k.top_san_pham.forEach(ghiNho); k.nhom.forEach(n => n.top_san_pham.forEach(ghiNho)); });
+  ((duLieu.bung_no || {}).san_pham || []).forEach(ghiNho);
+  ((duLieu.nen_quang_ba || {}).san_pham || []).forEach(ghiNho);
+  Object.values(pt().nhom).forEach(v => (v.theo_loai || []).forEach(l => (l.san_pham || []).forEach(ghiNho)));
+}
+// Thứ hạng hiện tại (theo kỳ và kiểu xếp đang chọn)
+function hangNganh(ten) {
+  const ds = [...duLieu.ky[kyDangChon].nhom].sort((a, b) => b[xepTheo] - a[xepTheo]);
+  const i = ds.findIndex(n => n.ten === ten);
+  return i < 0 ? null : {hang: i + 1, tong: ds.length};
+}
+function hangLoai(nhom, ten) {
+  const tatCa = tatCaLoai().sort((a, b) => b.ban_7_ngay - a.ban_7_ngay);
+  const trongNganh = (pt().nhom[nhom]?.theo_loai || []);
+  return {chung: tatCa.findIndex(l => l.nhom === nhom && l.ten === ten) + 1, tongChung: tatCa.length,
+          nganh: trongNganh.findIndex(l => l.ten === ten) + 1, tongNganh: trongNganh.length};
+}
+function hangSp(ma) {   // xếp theo số bán 7 ngày, trong ngành và trên toàn bộ sản phẩm đang theo dõi
+  const sp = KHO_SP[ma], ban = pt().san_pham;
+  if (!sp || !ban[ma]) return null;
+  const tatCa = Object.keys(ban).filter(m => KHO_SP[m]).sort((a, b) => ban[b].ban_7_ngay - ban[a].ban_7_ngay);
+  const trongNganh = tatCa.filter(m => KHO_SP[m].nhom === sp.nhom);
+  return {chung: tatCa.indexOf(ma) + 1, tongChung: tatCa.length, nganh: trongNganh.indexOf(ma) + 1, tongNganh: trongNganh.length};
+}
+const hangSo = h => `<span class="hang-so ${h <= 3 ? "h" + h : ""}">#${h}</span>`;
+
+function timKiem(tu) {
+  const q = boDau(tu);
+  if (!q) return null;
+  const coDau = boDau(tu) !== tu.toLowerCase().trim();             // người dùng gõ có dấu thì so đúng dấu
+  const chuan = x => coDau ? String(x || "").toLowerCase().normalize("NFC") : boDau(x);
+  const tuTim = chuan(tu).split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+  // 2 = mọi từ khớp trọn vẹn, 1 = có từ chỉ khớp phần đầu, 0 = không khớp
+  const muc = ten => { const tu2 = chuan(ten).split(/[^\p{L}\p{N}]+/u);
+    if (!tuTim.every(t => tu2.some(w => w.startsWith(t)))) return 0;
+    return tuTim.every(t => tu2.includes(t)) ? 2 : 1; };
+  let nguong = 1;
+  const khop = ten => muc(ten) >= nguong;
+  const diem = ten => chuan(ten).startsWith(tuTim[0] || "") ? 0 : 1;   // khớp ngay từ đầu tên thì lên trước
+  // Có kết quả khớp trọn từ thì bỏ các kết quả chỉ khớp một phần (gõ "son" thì không ra "đời sống")
+  const tatCaTen = Object.keys(pt().nhom).concat(tatCaLoai().map(l => l.ten), Object.values(KHO_SP).map(s => s.ten));
+  if (tatCaTen.some(t => muc(t) === 2)) nguong = 2;
+  const nganh = Object.keys(pt().nhom).concat(duLieu.ky[kyDangChon].nhom.map(n => n.ten))
+    .filter((v, i, a) => a.indexOf(v) === i && khop(v)).sort((a, b) => diem(a) - diem(b)).slice(0, 5);
+  const loai = tatCaLoai().filter(l => khop(l.ten)).sort((a, b) => diem(a.ten) - diem(b.ten) || b.ban_7_ngay - a.ban_7_ngay).slice(0, 6);
+  const sp = Object.values(KHO_SP).filter(s => khop(s.ten) || khop(s.cua_hang))
+    .map(s => ({s, h: hangSp(s.ma)})).sort((a, b) => diem(a.s.ten) - diem(b.s.ten) || (a.h ? a.h.chung : 1e9) - (b.h ? b.h.chung : 1e9))
+    .slice(0, 8).map(x => x.s);   // sản phẩm xếp theo thứ hạng bán 7 ngày
+  return {nganh, loai, sp};
+}
+const kqTim = document.getElementById("kqTim"), oTim = document.getElementById("oTim");
+let dangChonKq = -1;
+function veKetQua() {
+  const tu = oTim.value, kq = duLieu ? timKiem(tu) : null;
+  if (!kq) { kqTim.classList.remove("mo"); oTim.setAttribute("aria-expanded", "false"); return; }
+  let html = "";
+  if (kq.nganh.length) html += `<h4><span>Ngành hàng</span><span>hạng ${anToan(duLieu.ky[kyDangChon].ten.toLowerCase())}</span></h4>` + kq.nganh.map(ten => {
+    const h = hangNganh(ten), p = pt().nhom[ten];
+    return `<button class="kq" role="option" data-nhom="${anToan(ten)}">${oBt(ten)}
+      <div style="min-width:0"><div class="ten-kq">${toSang(ten, tu)}</div><div class="phu-kq">${p ? anToan(p.giai_doan.ten) + (p.giai_doan.tang_tuan !== null ? ", " + phanTram(p.giai_doan.tang_tuan) + " so với tuần trước" : "") : "Chưa có phân tích"}</div></div>
+      <div class="hang-kq">${h ? hangSo(h.hang) + `<span class="phu">trên ${h.tong} ngành</span>` : ""}</div></button>`;
+  }).join("");
+  if (kq.loai.length) html += `<h4><span>Loại hàng</span><span>hạng theo số bán 7 ngày</span></h4>` + kq.loai.map(l => {
+    const h = hangLoai(l.nhom, l.ten);
+    return `<button class="kq" role="option" data-loai="${anToan(l.ten)}" data-trong="${anToan(l.nhom)}">${oBt(l.nhom)}
+      <div style="min-width:0"><div class="ten-kq">${toSang(vietHoa(l.ten), tu)}</div><div class="phu-kq">${anToan(l.nhom)}, ${anToan(l.giai_doan.ten)} ${l.giai_doan.tang_tuan !== null ? phanTram(l.giai_doan.tang_tuan) : ""}</div></div>
+      <div class="hang-kq">${hangSo(h.chung)}<span class="phu">#${h.nganh} trong ngành</span></div></button>`;
+  }).join("");
+  if (kq.sp.length) html += `<h4><span>Sản phẩm</span><span>hạng trong ngành, 7 ngày</span></h4>` + kq.sp.map(s => {
+    const h = hangSp(s.ma), [bt, m] = nganh(s.nhom);
+    const hang = h ? hangSo(h.nganh) + `<span class="phu">#${h.chung} toàn bộ</span>` : `<span class="phu">${tienGon(s.gia)}</span>`;
+    return `<button class="kq" role="option" data-sp="${anToan(s.ma)}">${s.anh ? `<img src="${anToan(s.anh)}" alt="" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'o-bt',textContent:'${bt}',style:'--m:${m}'}))">` : oBt(s.nhom)}
+      <div style="min-width:0"><div class="ten-kq">${toSang(s.ten, tu)}</div><div class="phu-kq">${tienGon(s.gia)} · ${anToan(s.cua_hang || s.nhom)}</div></div>
+      <div class="hang-kq">${hang}</div></button>`;
+  }).join("");
+  kqTim.innerHTML = html || `<div class="kq-rong">Không tìm thấy "${anToan(tu)}". Thử gõ ngắn hơn, ví dụ "nồi chiên", "giày", "son".</div>`;
+  dangChonKq = -1;
+  kqTim.classList.add("mo"); oTim.setAttribute("aria-expanded", "true");
+}
+oTim.addEventListener("input", veKetQua);
+oTim.addEventListener("focus", () => { if (oTim.value) veKetQua(); });
+oTim.addEventListener("keydown", e => {
+  const ds = [...kqTim.querySelectorAll(".kq")];
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+    e.preventDefault(); if (!ds.length) return;
+    dangChonKq = (dangChonKq + (e.key === "ArrowDown" ? 1 : -1) + ds.length) % ds.length;
+    ds.forEach((d, i) => d.classList.toggle("dang-chon", i === dangChonKq)); ds[dangChonKq].scrollIntoView({block: "nearest"});
+  } else if (e.key === "Enter") {
+    e.preventDefault(); (ds[dangChonKq] || ds[0])?.click();
+  } else if (e.key === "Escape") { kqTim.classList.remove("mo"); oTim.blur(); }
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "/" && !["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) { e.preventDefault(); oTim.focus(); }
+});
+document.addEventListener("click", e => { if (!e.target.closest(".tim")) kqTim.classList.remove("mo"); });
+
+// ---------- Bảng phân tích loại hàng ----------
+function moPhanTichLoai(nhom, ten) {
+  const l = (pt().nhom[nhom]?.theo_loai || []).find(x => x.ten === ten);
+  if (!l) { moPhanTichNhom(nhom); return; }
+  const [bt, m] = nganh(nhom), h = hangLoai(nhom, ten), gd = l.giai_doan, ct = l.canh_tranh, gia = l.khoang_gia;
+  const ketLuan = l.loi_khuyen && l.loi_khuyen.nguoi_ban[0];
+  moBang(`<div class="pt-dau">${oBt(nhom)}<div style="min-width:0"><h2>${anToan(vietHoa(ten))}</h2>
+      <div class="ds-chip">${chip(gd)}<span class="chip xam">Hạng ${h.chung} / ${h.tongChung} loại hàng</span><span class="chip xam">#${h.nganh} trong ${anToan(nhom)}</span></div></div>${nutDong()}</div>
+    <div class="pt-than">
+      ${ketLuan ? `<div class="ket-luan"><span class="phu">Kết luận</span><b>${anToan(ketLuan)}</b></div>` : ""}
+      ${khoiGianHang(nhom)}
+      <div class="chi-so">
+        ${oCs("Bán 7 ngày qua", soVN(l.ban_7_ngay) + " sp", `trung bình ${soVN(gd.tb_7_ngay)} sp mỗi ngày`)}
+        ${oCs("So với tuần trước", bienDongMau(gd.tang_tuan), gd.da_gan_day === null ? "cần 8 ngày số liệu" : `3 ngày gần đây ${phanTram(gd.da_gan_day)}`)}
+        ${oCs("Độ cạnh tranh", ct.muc ? TEN_CT[ct.muc] : "–", ct.muc ? `${ct.so_shop} shop, 3 shop đầu chiếm ${soLe(ct.top3_phan_tram)}%` : "")}
+        ${oCs("Giá bán chạy nhất", gia ? `<span style="color:var(--cam)">${tienGon(gia.pho_bien)}</span>` : "–", gia ? `khoảng ${tienGon(gia.thap)} đến ${tienGon(gia.cao)}` : "")}
+      </div>
+      <div class="pt-khoi bieu-do"><h3>📊 Số bán 30 ngày gần nhất</h3>${bieuDo(l.bieu_do, m)}</div>
+      ${khoiLoiKhuyen(l.loi_khuyen)}
+      ${(l.san_pham || []).length ? `<div class="pt-khoi"><h3>🛒 Sản phẩm ${anToan(ten)} bán chạy nhất</h3><div class="luoi-sp">${l.san_pham.map((s, i) => theSp(s, `#${i + 1}`, "ban_nhieu", soVN(s.so_ban) + " sp / 7 ngày")).join("")}</div></div>` : ""}
+      <button class="nut-phu" data-nhom="${anToan(nhom)}">${bt} Xem cả ngành ${anToan(nhom)}</button>
     </div>`);
 }
 
@@ -690,9 +858,11 @@ document.addEventListener("keydown", e => {
 });
 document.addEventListener("click", e => {
   if (e.target.closest("[data-ngoai]")) return;   // link sang Shopee: để trình duyệt mở, không mở bảng
-  const el = e.target.closest("[data-sp],[data-nhom],[data-dong]");
+  const el = e.target.closest("[data-sp],[data-loai],[data-nhom],[data-dong]");
   if (!el) return;
+  if (el.closest(".kq-tim")) { kqTim.classList.remove("mo"); }
   if (el.hasAttribute("data-dong")) dongBang();
+  else if (el.dataset.loai) moPhanTichLoai(el.dataset.trong, el.dataset.loai);
   else if (el.dataset.sp) moPhanTichSp(el.dataset.sp);
   else if (el.dataset.nhom) moPhanTichNhom(el.dataset.nhom);
 });
@@ -713,6 +883,7 @@ fetch("du_lieu/bang_xep_hang.json?t=" + Date.now())
   .then(r => { if (!r.ok) throw new Error(); return r.json(); })
   .then(d => {
     duLieu = d;
+    gomSanPham();
     document.getElementById("capNhat").textContent = `Số liệu đến hết ngày ${ngayVN(d.ngay)}, theo dõi ${soVN(d.so_san_pham_theo_doi)} sản phẩm`;
     veTrang();
   })
